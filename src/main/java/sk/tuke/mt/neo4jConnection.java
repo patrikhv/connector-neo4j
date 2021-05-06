@@ -17,18 +17,38 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.common.logging.Log;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.AuthTokens;
 
 public class neo4jConnection {
 
     private static final Log LOG = Log.getLog(neo4jConnection.class);
 
     private neo4jConfiguration configuration;
+    private Driver driver;
+
+    //TODO list of drivers/connectors?
 
     public neo4jConnection(neo4jConfiguration configuration) {
         this.configuration = configuration;
+        connect();
+
+    }
+
+    public void connect(){
+        // TODO check if already connected
+        configuration.validate();
+        this.driver = GraphDatabase.driver( configuration.getUri(), AuthTokens.basic(configuration.getUserName(),
+                configuration.getPassword()));
     }
 
     public void dispose() {
-        //todo implement
+        driver.close();
+        driver = null;
+    }
+
+    public Driver getDriver(){
+        return driver;
     }
 }

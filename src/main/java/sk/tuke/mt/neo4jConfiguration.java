@@ -24,20 +24,44 @@ public class neo4jConfiguration extends AbstractConfiguration {
 
     private static final Log LOG = Log.getLog(neo4jConfiguration.class);
 
-    private String sampleProperty;
+    private String uri;
+    private String userName;
+    private String password;
 
     @Override
     public void validate() {
-        //todo implement
+        // TODO
     }
 
-    @ConfigurationProperty(displayMessageKey = "neo4j.config.sampleProperty",
-            helpMessageKey = "neo4j.config.sampleProperty.help")
-    public String getSampleProperty() {
-        return sampleProperty;
+    @ConfigurationProperty(displayMessageKey = "neo4j.config.uri",
+            helpMessageKey = "neo4j.config.uri.help")
+    public String getUri() {
+        return uri;
     }
 
-    public void setSampleProperty(String sampleProperty) {
-        this.sampleProperty = sampleProperty;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
+
+    @ConfigurationProperty(displayMessageKey = "neo4j.config.username",
+            helpMessageKey = "neo4j.config.username.help")
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    @ConfigurationProperty(displayMessageKey = "neo4j.config.password",
+            helpMessageKey = "neo4j.config.password.help")
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 }
