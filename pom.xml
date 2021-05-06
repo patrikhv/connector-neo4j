@@ -26,16 +26,16 @@
         <relativePath></relativePath>
     </parent>
 
-    <groupId>com.evolveum.polygon</groupId>
+    <groupId>sk.tuke.mt</groupId>
     <artifactId>connector-neo4j</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Neo4jConnector</name>
+    <name>neo4j</name>
 
     <properties>
-        <connectorPackage>com.evolveum.polygon</connectorPackage>
-        <connectorClass>Neo4jConnectorConnector</connectorClass>
+        <connectorPackage>sk.tuke.mt</connectorPackage>
+        <connectorClass>neo4jConnector</connectorClass>
     </properties>
 
     <repositories>

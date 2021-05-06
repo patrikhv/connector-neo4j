@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.evolveum.polygon;
+package sk.tuke.mt;
 
 import org.identityconnectors.common.logging.Log;
 
-public class Neo4jConnectorConnection {
+public class neo4jConnection {
 
-    private static final Log LOG = Log.getLog(Neo4jConnectorConnection.class);
+    private static final Log LOG = Log.getLog(neo4jConnection.class);
 
-    private Neo4jConnectorConfiguration configuration;
+    private neo4jConfiguration configuration;
 
-    public Neo4jConnectorConnection(Neo4jConnectorConfiguration configuration) {
+    public neo4jConnection(neo4jConfiguration configuration) {
         this.configuration = configuration;
     }
 

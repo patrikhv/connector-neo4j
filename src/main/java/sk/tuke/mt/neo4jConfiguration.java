@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.evolveum.polygon;
+package sk.tuke.mt;
 
 import org.identityconnectors.framework.spi.AbstractConfiguration;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.spi.ConfigurationProperty;
 
-public class Neo4jConnectorConfiguration extends AbstractConfiguration {
+public class neo4jConfiguration extends AbstractConfiguration {
 
-    private static final Log LOG = Log.getLog(Neo4jConnectorConfiguration.class);
+    private static final Log LOG = Log.getLog(neo4jConfiguration.class);
 
     private String sampleProperty;
 
@@ -31,8 +31,8 @@ public class Neo4jConnectorConfiguration extends AbstractConfiguration {
         //todo implement
     }
 
-    @ConfigurationProperty(displayMessageKey = "neo4jconnector.config.sampleProperty",
-            helpMessageKey = "neo4jconnector.config.sampleProperty.help")
+    @ConfigurationProperty(displayMessageKey = "neo4j.config.sampleProperty",
+            helpMessageKey = "neo4j.config.sampleProperty.help")
     public String getSampleProperty() {
         return sampleProperty;
     }

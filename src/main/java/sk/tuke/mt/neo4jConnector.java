@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package com.evolveum.polygon;
+package sk.tuke.mt;
 
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.Connector;
 import org.identityconnectors.framework.spi.ConnectorClass;
 
-@ConnectorClass(displayNameKey = "neo4jconnector.connector.display", configurationClass = Neo4jConnectorConfiguration.class)
-public class Neo4jConnectorConnector implements Connector {
+@ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = neo4jConfiguration.class)
+public class neo4jConnector implements Connector {
 
-    private static final Log LOG = Log.getLog(Neo4jConnectorConnector.class);
+    private static final Log LOG = Log.getLog(neo4jConnector.class);
 
-    private Neo4jConnectorConfiguration configuration;
-    private Neo4jConnectorConnection connection;
+    private neo4jConfiguration configuration;
+    private neo4jConnection connection;
 
     @Override
     public Configuration getConfiguration() {
@@ -36,8 +36,8 @@ public class Neo4jConnectorConnector implements Connector {
 
     @Override
     public void init(Configuration configuration) {
-        this.configuration = (Neo4jConnectorConfiguration)configuration;
-        this.connection = new Neo4jConnectorConnection(this.configuration);
+        this.configuration = (neo4jConfiguration)configuration;
+        this.connection = new neo4jConnection(this.configuration);
     }
 
     @Override
