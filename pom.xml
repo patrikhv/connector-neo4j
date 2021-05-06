@@ -31,11 +31,11 @@
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Neo4j connector</name>
+    <name>Neo4jConnector</name>
 
     <properties>
         <connectorPackage>com.evolveum.polygon</connectorPackage>
-        <connectorClass>Neo4j connectorConnector</connectorClass>
+        <connectorClass>Neo4jConnectorConnector</connectorClass>
     </properties>
 
     <repositories>

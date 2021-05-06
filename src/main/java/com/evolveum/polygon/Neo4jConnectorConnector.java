@@ -21,13 +21,13 @@ import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.Connector;
 import org.identityconnectors.framework.spi.ConnectorClass;
 
-@ConnectorClass(displayNameKey = "neo4j connector.connector.display", configurationClass = Neo4j connectorConfiguration.class)
-public class Neo4j connectorConnector implements Connector {
+@ConnectorClass(displayNameKey = "neo4jconnector.connector.display", configurationClass = Neo4jConnectorConfiguration.class)
+public class Neo4jConnectorConnector implements Connector {
 
-    private static final Log LOG = Log.getLog(Neo4j connectorConnector.class);
+    private static final Log LOG = Log.getLog(Neo4jConnectorConnector.class);
 
-    private Neo4j connectorConfiguration configuration;
-    private Neo4j connectorConnection connection;
+    private Neo4jConnectorConfiguration configuration;
+    private Neo4jConnectorConnection connection;
 
     @Override
     public Configuration getConfiguration() {
@@ -36,8 +36,8 @@ public class Neo4j connectorConnector implements Connector {
 
     @Override
     public void init(Configuration configuration) {
-        this.configuration = (Neo4j connectorConfiguration)configuration;
-        this.connection = new Neo4j connectorConnection(this.configuration);
+        this.configuration = (Neo4jConnectorConfiguration)configuration;
+        this.connection = new Neo4jConnectorConnection(this.configuration);
     }
 
     @Override

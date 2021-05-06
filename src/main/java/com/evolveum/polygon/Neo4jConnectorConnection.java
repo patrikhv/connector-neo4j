@@ -18,13 +18,13 @@ package com.evolveum.polygon;
 
 import org.identityconnectors.common.logging.Log;
 
-public class Neo4j connectorConnection {
+public class Neo4jConnectorConnection {
 
-    private static final Log LOG = Log.getLog(Neo4j connectorConnection.class);
+    private static final Log LOG = Log.getLog(Neo4jConnectorConnection.class);
 
-    private Neo4j connectorConfiguration configuration;
+    private Neo4jConnectorConfiguration configuration;
 
-    public Neo4j connectorConnection(Neo4j connectorConfiguration configuration) {
+    public Neo4jConnectorConnection(Neo4jConnectorConfiguration configuration) {
         this.configuration = configuration;
     }
 
