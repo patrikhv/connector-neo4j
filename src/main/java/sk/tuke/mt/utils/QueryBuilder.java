@@ -26,7 +26,8 @@ public class QueryBuilder {
         // String i = "user_name:$user_name";
         String params = String.join(",", paramsList);
         String skeleton = String.format
-                ("CREATE (x:%s {%s}) RETURN id(x)",
+                ("CREATE (x:%s {%s})\n" +
+                 "RETURN id(x)",
                 type, params);  // TODO security
 
         Value values = createValues(set);
@@ -37,9 +38,42 @@ public class QueryBuilder {
     public static Query deleteQuery(ObjectClass objectClass, Uid uid){
         String type = objectClass.getObjectClassValue();
         String skeleton = String.format
-                ("MATCH (x:%s) WHERE ID(x)=%s DETACH DELETE x",
+                ("MATCH (x:%s)\n" +
+                 "WHERE ID(x)=%s\n" +
+                 "DETACH DELETE x",
                 type, uid.getUidValue());
         return new Query(skeleton);
+    }
+
+    // Example query
+    /*
+    MATCH (u:User)
+    WHERE ID(u) = 4
+    SET u.userName = "nove meno test aj vek", u.age = 50
+    RETURN ID(u)
+    */
+
+    // TODO updateOp
+    public static Query updateQuery(ObjectClass objectClass,Uid uid,Set<Attribute> set){
+        String type = objectClass.getObjectClassValue();
+        List<String> paramsToUpdate = new ArrayList<>();
+        for (Attribute attribute : set){
+            String name = attribute.getName();
+            String param = String.format("x.%s = $%s",name,name);
+            paramsToUpdate.add(param);
+        }
+
+        String params = String.join(",", paramsToUpdate);
+        String skeleton = String.format
+                ("MATCH (x:%s)\n" +
+                 "WHERE ID(x)=%s\n" +
+                 "SET %s\n" +
+                 "RETURN ID(x)",
+                 type, uid.getUidValue(), params);
+
+        Value values = createValues(set);
+
+        return new Query(skeleton,values);
     }
 
     private static Value createValues(Set<Attribute> set){

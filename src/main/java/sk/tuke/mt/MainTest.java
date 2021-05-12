@@ -21,14 +21,21 @@ public class MainTest {
 
         connector.test();
 
-        User first = new User("Anton", 25);
+        User first = new User("Martin", 99);
 
         ObjectClass objectClass = new ObjectClass(first.getClass().getSimpleName());
-        OperationOptionsBuilder builder = new OperationOptionsBuilder();// ???
+        OperationOptionsBuilder builder = new OperationOptionsBuilder(); // TODO fix error caused by builder
 
-        Uid id = connector.create(objectClass,first.getAttributes(),null); // TODO fix
-        System.out.printf("Id: %s%n", id.getUidValue());
-        //connector.delete(objectClass, new Uid("1"), null);
+        // Uid id = connector.create(objectClass,first.getAttributes(),null);
+        // Uid id = connector.update(objectClass, new Uid("5"), first.getAttributes(), null );
+        // connector.delete(objectClass, new Uid("1"), null);
+
+        //System.out.printf("Id: %s%n", id.getUidValue());
+
+
+
+
+
         connector.dispose();
     }
 }

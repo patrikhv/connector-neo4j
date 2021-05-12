@@ -17,6 +17,7 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.common.exceptions.ConnectionFailedException;
 import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.ConnectorClass;
@@ -24,8 +25,6 @@ import org.identityconnectors.framework.spi.PoolableConnector;
 import org.identityconnectors.framework.spi.operations.*;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
-import org.neo4j.driver.Transaction;
-import org.neo4j.driver.TransactionWork;
 import sk.tuke.mt.utils.QueryBuilder;
 
 import java.util.Set;
@@ -63,16 +62,16 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
     // ako na to?
     @Override
     public Uid create(ObjectClass objectClass, Set<Attribute> set, OperationOptions operationOptions) {
-        int id = -1;
+        String id = null;
         try (Session session = this.connection.getDriver().session()){
             id = session.writeTransaction(transaction -> {
-                Result result = transaction.run(QueryBuilder.createQuery(objectClass,set));
-                return result.single().get( 0 ).asInt();
+                Result result = transaction.run(QueryBuilder.createQuery(objectClass, set));
+                return String.valueOf(result.single().get( 0 ).asInt());
             });
         }
-        if (id >= 0) {
-            System.out.printf("New object in Neo4j with id: %d%n", id );
-            return new Uid(String.valueOf(id));
+        if (id != null) {
+            System.out.printf("New object in Neo4j with id: %s%n", id );
+            return new Uid(id);
         }
         return null;
     }
@@ -95,6 +94,16 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
 
     @Override
     public Uid update(ObjectClass objectClass, Uid uid, Set<Attribute> set, OperationOptions operationOptions) {
+        String id = null;
+        try (Session session = this.connection.getDriver().session()){
+            id = session.writeTransaction(transaction -> {
+                Result result = transaction.run(QueryBuilder.updateQuery(objectClass, uid, set));
+                return String.valueOf(result.single().get( 0 ).asInt());
+            });
+        }
+        if (id != null) {
+            return new Uid(id);
+        }
         return null;
     }
 
@@ -104,14 +113,12 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
         cleanupBeforeTest();
         connection.connect();
         try{
-            // Note: Even if this method throws an exception,
-            // the driver still need to be closed via close() to free up all resources.
             connection.getDriver().verifyConnectivity();
             LOG.info("Connection test: finished");
         } catch (Exception e){
             LOG.error("Connection test: failed!");
             connection.dispose();
-            throw new RuntimeException(e.getCause());
+            throw new ConnectionFailedException(e);
         }
     }
 
@@ -130,8 +137,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
             connection.getDriver().verifyConnectivity();
         }catch (Exception e){
             LOG.error("Check alive: failed! Reconnecting");
-            //dispose(); //TODO what if i delete configuration and want to init again
-            init(configuration);
+            throw new ConnectionFailedException(e);
         }
     }
 }
