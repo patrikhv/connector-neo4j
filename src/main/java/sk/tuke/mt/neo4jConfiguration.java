@@ -16,6 +16,7 @@
 
 package sk.tuke.mt;
 
+import org.identityconnectors.framework.common.exceptions.ConfigurationException;
 import org.identityconnectors.framework.spi.AbstractConfiguration;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.spi.ConfigurationProperty;
@@ -30,7 +31,10 @@ public class neo4jConfiguration extends AbstractConfiguration {
 
     @Override
     public void validate() {
-        // TODO
+        if ((uri == null || uri.length() == 0) || (userName == null || userName.length() == 0) ||
+                (password == null || password.length() == 0)){
+            throw new ConfigurationException("Invalid configuration");
+        }
     }
 
     @ConfigurationProperty(displayMessageKey = "neo4j.config.uri",

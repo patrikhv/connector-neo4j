@@ -30,10 +30,9 @@ import sk.tuke.mt.utils.QueryBuilder;
 
 import java.util.Set;
 
-import static org.neo4j.driver.Values.parameters;
 
 @ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = neo4jConfiguration.class)
-public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp,DeleteOp, SchemaOp, TestOp {
+public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, DeleteOp, SchemaOp, TestOp {
 
     private static final Log LOG = Log.getLog(neo4jConnector.class);
 
@@ -61,29 +60,36 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp,Del
         }
     }
 
+    // ako na to?
     @Override
     public Uid create(ObjectClass objectClass, Set<Attribute> set, OperationOptions operationOptions) {
-        try {
-            Session session = connection.getDriver().session();
-            String txQuerry = "";
-            session.writeTransaction((TransactionWork<Void>) transaction -> {
-                Result result =
-                        transaction.run(QueryBuilder.createQuery(objectClass,set));
-                return null; //return result
+        int id = -1;
+        try (Session session = this.connection.getDriver().session()){
+            id = session.writeTransaction(transaction -> {
+                Result result = transaction.run(QueryBuilder.createQuery(objectClass,set));
+                return result.single().get( 0 ).asInt();
             });
-        }catch (Exception e){
-            e.printStackTrace();
         }
-        return new Uid(""); //todo return value
+        if (id >= 0) {
+            System.out.printf("New object in Neo4j with id: %d%n", id );
+            return new Uid(String.valueOf(id));
+        }
+        return null;
     }
 
     @Override
     public void delete(ObjectClass objectClass, Uid uid, OperationOptions operationOptions) {
-
+        try(Session session = this.connection.getDriver().session()){
+            session.writeTransaction(transaction -> {
+                transaction.run(QueryBuilder.deleteQuery(objectClass, uid));
+                return null;
+            });
+        }
     }
 
     @Override
     public Schema schema() {
+        // TODO study, how to get scheme from Neo4j database
         return null;
     }
 
@@ -94,7 +100,6 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp,Del
 
     @Override
     public void test() {
-
         LOG.info("Connection test: started");
         cleanupBeforeTest();
         connection.connect();

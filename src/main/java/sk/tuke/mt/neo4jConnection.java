@@ -25,7 +25,7 @@ public class neo4jConnection {
 
     private static final Log LOG = Log.getLog(neo4jConnection.class);
 
-    private neo4jConfiguration configuration;
+    private final neo4jConfiguration configuration;
     private Driver driver;
 
     //TODO list of drivers/connectors?
