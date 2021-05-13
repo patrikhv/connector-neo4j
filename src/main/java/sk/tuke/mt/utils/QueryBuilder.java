@@ -28,7 +28,7 @@ public class QueryBuilder {
         String skeleton = String.format
                 ("CREATE (x:%s {%s})\n" +
                  "RETURN id(x)",
-                type, params);  // TODO security
+                type, params);
 
         Value values = createValues(set);
 
@@ -45,15 +45,7 @@ public class QueryBuilder {
         return new Query(skeleton);
     }
 
-    // Example query
-    /*
-    MATCH (u:User)
-    WHERE ID(u) = 4
-    SET u.userName = "nove meno test aj vek", u.age = 50
-    RETURN ID(u)
-    */
 
-    // TODO updateOp
     public static Query updateQuery(ObjectClass objectClass,Uid uid,Set<Attribute> set){
         String type = objectClass.getObjectClassValue();
         List<String> paramsToUpdate = new ArrayList<>();
@@ -74,6 +66,11 @@ public class QueryBuilder {
         Value values = createValues(set);
 
         return new Query(skeleton,values);
+    }
+
+    public static Query schemaQueryAll(){
+        String skeleton = "CALL db.schema.nodeTypeProperties";
+        return new Query(skeleton);
     }
 
     private static Value createValues(Set<Attribute> set){

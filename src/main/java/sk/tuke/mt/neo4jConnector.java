@@ -23,10 +23,13 @@ import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.ConnectorClass;
 import org.identityconnectors.framework.spi.PoolableConnector;
 import org.identityconnectors.framework.spi.operations.*;
+import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import sk.tuke.mt.utils.QueryBuilder;
+import sk.tuke.mt.utils.SchemaHelper;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -88,8 +91,21 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
 
     @Override
     public Schema schema() {
+        // TODO what to do with relationships?
+        List<Record> records;
+        try(Session session = this.connection.getDriver().session()){
+            records = session.readTransaction(transaction -> {
+                Result result = transaction.run(QueryBuilder.schemaQueryAll());
+                return result.list();
+            });
+        }
+        System.out.println("---NEO4J SCHEMA---");
+        records.forEach(System.out::println);
+        System.out.println("--- ---");
+
         // TODO study, how to get scheme from Neo4j database
-        return null;
+
+        return SchemaHelper.getSchema(records);
     }
 
     @Override

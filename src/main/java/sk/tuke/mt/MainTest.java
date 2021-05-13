@@ -4,6 +4,7 @@ import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.ObjectClassInfoBuilder;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
 import org.identityconnectors.framework.common.objects.Uid;
+import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
 
 
@@ -19,20 +20,23 @@ public class MainTest {
         neo4jConnector connector = new neo4jConnector();
         connector.init(configuration);
 
-        connector.test();
+        //connector.test();
 
-        User first = new User("Martin", 99);
+        //User obj = new User("Ondrej", 57);
+        //Role obj = new Role("director");
 
-        ObjectClass objectClass = new ObjectClass(first.getClass().getSimpleName());
+        /*
+        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
         OperationOptionsBuilder builder = new OperationOptionsBuilder(); // TODO fix error caused by builder
+        Uid id = connector.create(objectClass,obj.getAttributes(),null);*/
 
-        // Uid id = connector.create(objectClass,first.getAttributes(),null);
+
         // Uid id = connector.update(objectClass, new Uid("5"), first.getAttributes(), null );
         // connector.delete(objectClass, new Uid("1"), null);
 
         //System.out.printf("Id: %s%n", id.getUidValue());
 
-
+        connector.schema();
 
 
 
