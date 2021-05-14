@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_14">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_15">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -70,11 +70,11 @@
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-container-default:1.0-alpha-9-stable-1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:3.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven.shared:maven-repository-builder:1.0-alpha-2" level="project" />
+    <orderEntry type="library" name="Maven: net.tirasa.connid:connector-framework-internal:1.4.1.0" level="project" />
     <orderEntry type="library" name="Maven: net.tirasa.connid:connector-framework:1.4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.tirasa.connid:connector-test-common:1.4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.tirasa.connid:connector-framework-contract:1.4.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: net.tirasa.connid:connector-framework-internal:1.4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy-all:2.3.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.inject:guice:3.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: javax.inject:javax.inject:1" level="project" />

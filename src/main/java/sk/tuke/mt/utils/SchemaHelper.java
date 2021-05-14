@@ -30,7 +30,7 @@ public class SchemaHelper {
                 list.forEach(property -> {
                     AttributeInfoBuilder uidAib = new AttributeInfoBuilder(Uid.NAME);
                     uidAib.setName(property.getPropertyName());
-                    uidAib.setType(property.getPropertyJavaType());
+                    uidAib.setType(property.getPropertyJavaType()); // TODO fix "Attribute type 'interface java.util.List' is not supported."
                     uidAib.setRequired(property.isMandatory());
                     objectClassBuilder.addAttributeInfo(uidAib.build());
                 });
@@ -57,6 +57,7 @@ public class SchemaHelper {
                     .collect(Collectors.toList());;
             System.out.println("--- " + nodeName + "---");
             filteredRecords.forEach(System.out::println);
+            System.out.println("--- end " + nodeName + "end ---");
             List<PropertyMapper> propertyMappers = new ArrayList<>();
             for (Record record : filteredRecords){
                 String name = record.get("propertyName").asString();

@@ -1,5 +1,6 @@
 package sk.tuke.mt.utils;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 public class PropertyMapper {
@@ -39,10 +40,14 @@ public class PropertyMapper {
     }
 
     public Class<?> getPropertyJavaType(){
+        // TODO set neo4j db not to generate arrays for single values
+        // TODO refactor this method and fix mappings
+        System.out.println(this.getPropertyNeoType());
         return switch (this.propertyNeoType) {
-            case "StringArray" -> List.class;
+            case "StringArray" -> String.class; //
             case "String" -> String.class;
-            case "Integer" -> Integer.class;
+            case "Integer" -> Long.class;
+            case "LongArray" -> Long.class;
             case "Boolean" -> Boolean.class;
             default -> Object.class;
         };
