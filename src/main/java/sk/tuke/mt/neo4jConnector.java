@@ -27,6 +27,8 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import sk.tuke.mt.utils.QueryBuilder;
+import sk.tuke.mt.utils.Relationship;
+import sk.tuke.mt.utils.RelationshipsMapper;
 import sk.tuke.mt.utils.SchemaHelper;
 
 import java.util.List;
@@ -39,33 +41,28 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
 
     private static final Log LOG = Log.getLog(neo4jConnector.class);
 
-    private neo4jConfiguration configuration;
     private neo4jConnection connection;
 
     @Override
     public Configuration getConfiguration() {
-        return configuration;
+        return connection.getConfiguration();
     }
 
     @Override
     public void init(Configuration configuration) {
-        this.configuration = (neo4jConfiguration)configuration;
-        this.connection = new neo4jConnection(this.configuration);
-        test();
+        this.connection = new neo4jConnection((neo4jConfiguration) configuration);
     }
 
     @Override
     public void dispose() {
-        configuration = null;
         if (connection != null) {
             connection.dispose();
-            connection = null;
         }
     }
 
     @Override
     public Uid create(ObjectClass objectClass, Set<Attribute> set, OperationOptions operationOptions) {
-        String id = null;
+        String id;
         try (Session session = this.connection.getDriver().session()){
             id = session.writeTransaction(transaction -> {
                 Result result = transaction.run(QueryBuilder.createQuery(objectClass, set));
@@ -73,10 +70,10 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
             });
         }
         if (id != null) {
-            System.out.printf("New object in Neo4j with id: %s%n", id );
             for (Attribute attribute: set){
-                if (attribute.getName().equals("rolesId")){
-                    createRelationship(id,attribute.getValue(),"IS_MEMBER_OF", null);
+                Relationship relationship = RelationshipsMapper.getRelationship(attribute);
+                if (relationship != null){
+                    createRelationship(id,attribute.getValue(),relationship, null);
                 }
             }
             return new Uid(id);
@@ -84,12 +81,12 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
         return null;
     }
 
-    public void createRelationship(String uid, List<Object> values, String name, List<Object> params){
+    public void createRelationship(String uid, List<Object> values, Relationship relationship, List<Object> params){
         String id = null;
         try (Session session = this.connection.getDriver().session()){
             id = session.writeTransaction(transaction -> {
                 for (Object val: values){
-                    Result result = transaction.run(QueryBuilder.createRelationshipQuery(uid,(String) val, name, params));
+                    Result result = transaction.run(QueryBuilder.createRelationshipQuery(uid,(String) val, relationship, params));
                 }
                 return null;
             });

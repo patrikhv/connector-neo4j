@@ -12,7 +12,8 @@ public class User {
 
     private String userName;
     private int age;
-    private List<String> rolesId;
+    private List<String> roles;
+    private List<String> projects;
 
     public User() {
     }
@@ -20,7 +21,8 @@ public class User {
     public User(String userName, int age) {
         this.userName = userName;
         this.age = age;
-        this.rolesId = new LinkedList<>();
+        this.roles = new LinkedList<>();
+        this.projects = new LinkedList<>();
     }
 
     public String getUserName() {
@@ -39,12 +41,20 @@ public class User {
         this.age = age;
     }
 
-    public List<String> getRolesId() {
-        return rolesId;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRolesId(List<String> rolesId) {
-        this.rolesId = rolesId;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    public List<String> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<String> projects) {
+        this.projects = projects;
     }
 
     public Set<Attribute> getAttributes() {
@@ -53,8 +63,11 @@ public class User {
 
         attributeSet.add(AttributeBuilder.build("userName", this.userName));
         attributeSet.add(AttributeBuilder.build("age", this.age));
-        if (this.rolesId.size() > 0){
-            attributeSet.add(AttributeBuilder.build("rolesId",this.rolesId.toArray()));
+        if (this.roles.size() > 0){
+            attributeSet.add(AttributeBuilder.build("roles",this.roles.toArray()));
+        }
+        if (this.projects.size() > 0){
+            attributeSet.add(AttributeBuilder.build("projects",this.projects.toArray()));
         }
 
         return attributeSet;

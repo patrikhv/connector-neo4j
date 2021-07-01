@@ -1,0 +1,107 @@
+{
+  "Role": {
+    "count": 2,
+    "relationships": {
+      "IS_MEMBER_OF": {
+        "count": 4,
+        "properties": {
+
+        },
+        "direction": "in",
+        "labels": [
+          "User"
+        ]
+      }
+    },
+    "type": "node",
+    "properties": {
+      "roleName": {
+        "existence": false,
+        "type": "STRING",
+        "indexed": false,
+        "unique": false
+      }
+    },
+    "labels": []
+  },
+  "Project": {
+    "count": 1,
+    "relationships": {
+      "IS_WORKING_ON": {
+        "count": 1,
+        "properties": {
+
+        },
+        "direction": "in",
+        "labels": [
+          "User"
+        ]
+      }
+    },
+    "type": "node",
+    "properties": {
+      "projectName": {
+        "existence": false,
+        "type": "STRING",
+        "indexed": false,
+        "unique": false
+      }
+    },
+    "labels": []
+  },
+  "User": {
+    "count": 1,
+    "relationships": {
+      "IS_WORKING_ON": {
+        "count": 1,
+        "properties": {
+
+        },
+        "direction": "out",
+        "labels": [
+          "Project"
+        ]
+      },
+      "IS_MEMBER_OF": {
+        "count": 2,
+        "properties": {
+
+        },
+        "direction": "out",
+        "labels": [
+          "Role"
+        ]
+      }
+    },
+    "type": "node",
+    "properties": {
+      "userName": {
+        "existence": false,
+        "type": "STRING",
+        "indexed": false,
+        "unique": false
+      },
+      "age": {
+        "existence": false,
+        "type": "INTEGER",
+        "indexed": false,
+        "unique": false
+      }
+    },
+    "labels": []
+  },
+  "IS_WORKING_ON": {
+    "count": 1,
+    "type": "relationship",
+    "properties": {
+
+    }
+  },
+  "IS_MEMBER_OF": {
+    "count": 2,
+    "type": "relationship",
+    "properties": {
+
+    }
+  }
+}

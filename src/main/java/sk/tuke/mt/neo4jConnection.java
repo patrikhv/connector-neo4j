@@ -51,4 +51,8 @@ public class neo4jConnection {
     public Driver getDriver(){
         return driver;
     }
+
+    public neo4jConfiguration getConfiguration(){
+        return configuration;
+    }
 }
