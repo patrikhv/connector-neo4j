@@ -18,6 +18,9 @@ public class QueryBuilder {
         String type = objectClass.getObjectClassValue();
         List<String> paramsList = new ArrayList<>();
         for (Attribute attribute : set){
+            if (attribute.getName().equals("rolesId")){
+                continue;
+            }
             String name = attribute.getName();
             String param = String.format("%s:$%s",name,name);
             paramsList.add(param);
@@ -88,6 +91,9 @@ public class QueryBuilder {
     private static Value createValues(Set<Attribute> set){
         List<Object> list = new ArrayList<>();
         for(Attribute attribute: set){
+            if (attribute.getName().equals("rolesId")){
+                continue;
+            }
             list.add(attribute.getName());
             if (attribute.getValue().size() == 1){
                 list.add(attribute.getValue().get(0));

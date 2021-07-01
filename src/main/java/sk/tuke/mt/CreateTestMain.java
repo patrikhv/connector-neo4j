@@ -3,6 +3,7 @@ package sk.tuke.mt;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
 import org.identityconnectors.framework.common.objects.Uid;
+import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
 
 import java.util.LinkedList;
@@ -26,7 +27,7 @@ public class CreateTestMain {
         User obj = new User("Jan", 54);
         obj.setRolesId(new LinkedList<>());
         obj.getRolesId().add("1");
-        obj.getRolesId().add("2");
+        obj.getRolesId().add("3");
 
 
         ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());

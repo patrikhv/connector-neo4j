@@ -63,7 +63,6 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
         }
     }
 
-    //TODO relationships
     @Override
     public Uid create(ObjectClass objectClass, Set<Attribute> set, OperationOptions operationOptions) {
         String id = null;
