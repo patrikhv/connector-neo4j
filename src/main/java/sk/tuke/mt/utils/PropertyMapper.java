@@ -42,11 +42,12 @@ public class PropertyMapper {
     public Class<?> getPropertyJavaType(){
         // TODO set neo4j db not to generate arrays for single values
         // TODO refactor this method and fix mappings
-        System.out.println(this.getPropertyNeoType());
+        //System.out.println(this.getPropertyNeoType());
         return switch (this.propertyNeoType) {
             case "StringArray" -> String.class; //
             case "String" -> String.class;
             case "Integer" -> Long.class;
+            case "Long" -> Long.class;
             case "LongArray" -> Long.class;
             case "Boolean" -> Boolean.class;
             default -> Object.class;

@@ -4,12 +4,15 @@ import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class User {
 
     private String userName;
     private int age;
+    private List<String> rolesId;
 
     public User() {
     }
@@ -17,6 +20,7 @@ public class User {
     public User(String userName, int age) {
         this.userName = userName;
         this.age = age;
+        this.rolesId = new LinkedList<>();
     }
 
     public String getUserName() {
@@ -35,20 +39,24 @@ public class User {
         this.age = age;
     }
 
+    public List<String> getRolesId() {
+        return rolesId;
+    }
+
+    public void setRolesId(List<String> rolesId) {
+        this.rolesId = rolesId;
+    }
+
     public Set<Attribute> getAttributes() {
         // TODO automate and simplify
         Set<Attribute> attributeSet = new HashSet<>();
 
-        AttributeBuilder builder1 = new AttributeBuilder();
-        builder1.setName("userName");
-        builder1.addValue(this.userName);
+        attributeSet.add(AttributeBuilder.build("userName", this.userName));
+        attributeSet.add(AttributeBuilder.build("age", this.age));
+        if (this.rolesId.size() > 0){
+            attributeSet.add(AttributeBuilder.build("rolesId",this.rolesId.toArray()));
+        }
 
-        AttributeBuilder builder2 = new AttributeBuilder();
-        builder2.setName("age");
-        builder2.addValue(this.age);
-
-        attributeSet.add(builder1.build());
-        attributeSet.add(builder2.build());
         return attributeSet;
     }
 }

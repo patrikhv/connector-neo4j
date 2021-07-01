@@ -30,6 +30,7 @@ import sk.tuke.mt.utils.QueryBuilder;
 import sk.tuke.mt.utils.SchemaHelper;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -74,9 +75,26 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
         }
         if (id != null) {
             System.out.printf("New object in Neo4j with id: %s%n", id );
+            for (Attribute attribute: set){
+                if (attribute.getName().equals("rolesId")){
+                    createRelationship(id,attribute.getValue(),"IS_MEMBER_OF", null);
+                }
+            }
             return new Uid(id);
         }
         return null;
+    }
+
+    public void createRelationship(String uid, List<Object> values, String name, List<Object> params){
+        String id = null;
+        try (Session session = this.connection.getDriver().session()){
+            id = session.writeTransaction(transaction -> {
+                for (Object val: values){
+                    Result result = transaction.run(QueryBuilder.createRelationshipQuery(uid,(String) val, name, params));
+                }
+                return null;
+            });
+        }
     }
 
     @Override
@@ -99,17 +117,12 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
                 return result.list();
             });
         }
-        System.out.println("---NEO4J SCHEMA---");
-        records.forEach(System.out::println);
-        System.out.println("--- ---");
-
-        // TODO study, how to get scheme from Neo4j database
-
         return SchemaHelper.getSchema(records);
     }
 
     @Override
     public Uid update(ObjectClass objectClass, Uid uid, Set<Attribute> set, OperationOptions operationOptions) {
+        // TODO update of relationships
         String id = null;
         try (Session session = this.connection.getDriver().session()){
             id = session.writeTransaction(transaction -> {

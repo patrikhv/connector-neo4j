@@ -10,12 +10,10 @@ import java.util.stream.Collectors;
 public class SchemaHelper {
 
     public static Schema getSchema(List<Record> records){
-        List<String> nodeNames = getNodeNames(records); // OK
-        //nodeNames.forEach(System.out::println);
+        List<String> nodeNames = getNodeNames(records);
         HashMap<String, List<PropertyMapper>> properties = getProperties(nodeNames, records);
-        System.out.println("******");
         for (String nodeName : nodeNames){
-            properties.get(nodeName).forEach(System.out::println);
+            //properties.get(nodeName).forEach(System.out::println);
         }
 
         return generateSchema(properties);
@@ -54,10 +52,7 @@ public class SchemaHelper {
             List<Record> filteredRecords = records
                     .stream()
                     .filter(record -> cleanNodeName(record.get("nodeType").asString()).equals(nodeName))
-                    .collect(Collectors.toList());;
-            System.out.println("--- " + nodeName + "---");
-            filteredRecords.forEach(System.out::println);
-            System.out.println("--- end " + nodeName + "end ---");
+                    .collect(Collectors.toList());
             List<PropertyMapper> propertyMappers = new ArrayList<>();
             for (Record record : filteredRecords){
                 String name = record.get("propertyName").asString();
@@ -80,6 +75,4 @@ public class SchemaHelper {
     private static String cleanNodeName(String nodeName){
         return nodeName.replace(":","").replace("`","");
     }
-
-
 }

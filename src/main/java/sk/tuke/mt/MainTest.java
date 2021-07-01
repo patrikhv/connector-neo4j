@@ -1,7 +1,12 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.*;
+import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /*
     JavaDoc
@@ -21,33 +26,32 @@ public class MainTest {
         neo4jConnector connector = new neo4jConnector();
         connector.init(configuration);
 
-        connector.test();
+        //connector.test();
 
-        User obj = new User("Juraj", 12);
-        //Role obj = new Role("student");
-
+//        User obj = new User("Peter", 21);
+//        obj.setRolesId(new LinkedList<>());
+//        obj.getRolesId().add("0");
+//        obj.getRolesId().add("1");
+        Role obj = new Role("student");
 
         ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
-        OperationOptionsBuilder builder = new OperationOptionsBuilder(); // TODO fix error caused by builder
+        OperationOptionsBuilder builder = new OperationOptionsBuilder();
 
         // CREATEOP
-        Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
-        System.out.printf("CREATE: Id: %s%n", id.getUidValue());
+         //Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
+         //System.out.printf("CREATE: Id: %s%n", id.getUidValue());
 
         // UPDATEOP
-        // Uid id = connector.update(objectClass, new Uid("5"), first.getAttributes(), null );
+        //Uid id = connector.update(objectClass, new Uid("5"), first.getAttributes(), null );
         //System.out.printf("UPDATE: Id: %s%n", id.getUidValue());
 
         // DELETEOP
         // connector.delete(objectClass, new Uid("1"), null);
 
-
-        /*java.lang.ClassNotFoundException: org.identityconnectors.framework.impl.serializer.ObjectSerializerFactoryImpl*/
-
         // SCHEMAOP
-        //Schema schema =  connector.schema();
-        //List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
-        //s.forEach(System.out::println);
+        Schema schema =  connector.schema();
+        List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
+        s.forEach(System.out::println);
 
 
 

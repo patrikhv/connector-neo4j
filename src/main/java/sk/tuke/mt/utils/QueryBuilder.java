@@ -35,6 +35,18 @@ public class QueryBuilder {
         return new Query(skeleton,values);
     }
 
+    public static Query createRelationshipQuery(String uid, String to, String name, List<Object> params) {
+        String skeleton = String.format
+                                ("MATCH (u:%s),(r:%s)\n" +
+                                "WHERE ID(u)=%s AND ID(r)=%s\n" +
+                                "CREATE (u)-[s:%s]->(r)\n"+
+                                "RETURN ID(s)",
+                                "User","Role", uid, to, name);
+        System.out.println(new Query(skeleton).toString());
+        return new Query(skeleton);
+    }
+
+
     public static Query deleteQuery(ObjectClass objectClass, Uid uid){
         String type = objectClass.getObjectClassValue();
         String skeleton = String.format
@@ -77,9 +89,15 @@ public class QueryBuilder {
         List<Object> list = new ArrayList<>();
         for(Attribute attribute: set){
             list.add(attribute.getName());
-            list.add(attribute.getValue()); // TODO problem -> list of objects unpack
+            if (attribute.getValue().size() == 1){
+                list.add(attribute.getValue().get(0));
+            }else{
+                list.add(attribute.getValue()); // TODO problem -> list of objects unpack
+            }
+
         }
         Object[] params = list.toArray(); // TODO check
+
         return parameters(params);
     }
 }
