@@ -113,6 +113,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
             });
         }
         RelationshipsMapper.getRelationshipsFromSchema(entities);
+        RelationshipsMapper.relationshipList.forEach(relationship -> System.out.println(relationship.toString()));
         List<Record> records;
         try(Session session = this.connection.getDriver().session()){
             records = session.readTransaction(transaction -> {

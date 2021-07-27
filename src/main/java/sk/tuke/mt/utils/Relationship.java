@@ -45,4 +45,14 @@ public class Relationship {
     public void setVirtualAttributeName(String virtualAttributeName) {
         this.virtualAttributeName = virtualAttributeName;
     }
+
+    @Override
+    public String toString() {
+        return "Relationship{" +
+                "fromObjectName='" + fromObjectName + '\'' +
+                ", toObjectName='" + toObjectName + '\'' +
+                ", relationshipName='" + relationshipName + '\'' +
+                ", virtualAttributeName='" + virtualAttributeName + '\'' +
+                '}';
+    }
 }

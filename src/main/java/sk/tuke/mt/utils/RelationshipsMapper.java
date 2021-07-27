@@ -1,27 +1,23 @@
 package sk.tuke.mt.utils;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.neo4j.driver.Record;
-import org.neo4j.driver.Value;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 
 public class RelationshipsMapper {
 
-    public static List<Relationship> getRelationships() {
-        List<Relationship> relationships = new LinkedList<>();
+    public static List<Relationship> relationshipList = new LinkedList<>();
 
-        Relationship isMemberOf = new Relationship("User","Role",
-                "IS_MEMBER_OF","roles");
-        Relationship isWorkingOn = new Relationship("User","Project",
-                "IS_WORKING_ON","projects");
-        relationships.add(isMemberOf);
-        relationships.add(isWorkingOn);
-        return relationships;
+
+    public static List<Relationship> getRelationships() {
+        return relationshipList;
     }
 
     public static Relationship getRelationship(Attribute attribute){
@@ -33,25 +29,42 @@ public class RelationshipsMapper {
         return null;
     }
 
+    public static void addRelationship(String from, String to, String name){
+        String virtualAttribute = to.toLowerCase() + "s";
+        Relationship relationship = new Relationship(from,to,name,virtualAttribute);
+        relationshipList.add(relationship);
+    }
+
     public static void getRelationshipsFromSchema(List<Record> records){
-        System.out.println(records.get(0).get(0));
-        List<Map> relationships = new LinkedList<>();
-        Map<String,Object> data = records.get(0).get(0).asMap();
-        for (String key: data.keySet()){
-            Map<String,Object> object = (Map) data.get(key);
-            if ("node".equals(object.get("type"))){
-                relationships.add(object);
-            }
-        }
-        for(Map relation: relationships){
-            Map map = (Map) relation.get("relationships");
-            for (Object s: map.keySet()){
-                System.out.println(map.get(s));
+        relationshipList = new LinkedList<>();
+        // TODO rel properties
+        JsonObject jsonObject = new JsonParser().parse(records.get(0).get(0).toString()).getAsJsonObject();
+        List<String>
+                elements = getKeys(jsonObject);
+        for (String element: elements){
+            JsonObject elementJson = jsonObject.get(element).getAsJsonObject();
+            String type = elementJson.get("type").getAsString();
+            if ("node".equals(type)){
+                JsonObject relationships = jsonObject.get(element).getAsJsonObject().get("relationships").getAsJsonObject();
+                List<String> relKeys = getKeys(relationships);
+                for (String relKey: relKeys){
+                    // TODO CHECK Multiple nodes in rel
+                    String node2 = relationships.get(relKey).getAsJsonObject().get("labels").getAsString();
+                    String direction = relationships.get(relKey).getAsJsonObject().get("direction").getAsString();
+                    //TODO check also IN, OUT
+                    if ("out".equals(direction)){
+                        addRelationship(element,node2,relKey);
+                    }
+                }
             }
         }
 
-        //meno, TODO prop, smer, kam
-        //System.out.println(relationships.get(0).get("relationships"));
-
+    }
+    public static List<String> getKeys(JsonObject jsonObject){
+        List<String> keys = new LinkedList<>();
+        for (Map.Entry<String, JsonElement> s :jsonObject.entrySet()){
+            keys.add(s.getKey().toString());
+        }
+        return keys;
     }
 }
