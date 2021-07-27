@@ -32,10 +32,10 @@ public class MainTest {
 //        obj.setRolesId(new LinkedList<>());
 //        obj.getRolesId().add("0");
 //        obj.getRolesId().add("1");
-        Role obj = new Role("student");
-
-        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
-        OperationOptionsBuilder builder = new OperationOptionsBuilder();
+//        Role obj = new Role("student");
+//
+//        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
+//        OperationOptionsBuilder builder = new OperationOptionsBuilder();
 
         // CREATEOP
          //Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
