@@ -75,6 +75,7 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.testng:testng:7.4.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.beust:jcommander:1.78" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.webjars:jquery:3.5.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.7" level="project" />
     <orderEntry type="library" name="Maven: net.tirasa.connid:connector-framework:1.4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.tirasa.connid:connector-test-common:1.4.0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: commons-io:commons-io:2.4" level="project" />

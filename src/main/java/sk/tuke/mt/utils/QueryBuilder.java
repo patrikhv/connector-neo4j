@@ -16,35 +16,48 @@ public class QueryBuilder {
 
     public static Query createQuery(ObjectClass objectClass, Set<Attribute> set){
         String type = objectClass.getObjectClassValue();
+        String paramsNames = getParams(set);
+
+        String skeleton = String.format
+                ("CREATE (x:%s {%s})\n" +
+                 "RETURN id(x)",
+                type, paramsNames);
+
+        Value paramsValues = createValues(set);
+
+        return new Query(skeleton,paramsValues);
+    }
+
+    private static String getParams(Set<Attribute> set){
         List<String> paramsList = new ArrayList<>();
         for (Attribute attribute : set){
-            if (attribute.getName().equals("rolesId")){
+            if (isVirtualAttribute(attribute)){
                 continue;
             }
             String name = attribute.getName();
             String param = String.format("%s:$%s",name,name);
             paramsList.add(param);
         }
-
-        // String i = "user_name:$user_name";
-        String params = String.join(",", paramsList);
-        String skeleton = String.format
-                ("CREATE (x:%s {%s})\n" +
-                 "RETURN id(x)",
-                type, params);
-
-        Value values = createValues(set);
-
-        return new Query(skeleton,values);
+        return String.join(",", paramsList);
     }
 
-    public static Query createRelationshipQuery(String uid, String to, String name, List<Object> params) {
+    public static boolean isVirtualAttribute(Attribute attribute){
+        List<Relationship> relationships = RelationshipsMapper.getRelationships();
+        for (Relationship relationship: relationships){
+            if (relationship.getVirtualAttributeName().equals(attribute.getName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Query createRelationshipQuery(String uid, String to, Relationship relationship, List<Object> params) {
         String skeleton = String.format
                                 ("MATCH (u:%s),(r:%s)\n" +
                                 "WHERE ID(u)=%s AND ID(r)=%s\n" +
                                 "CREATE (u)-[s:%s]->(r)\n"+
                                 "RETURN ID(s)",
-                                "User","Role", uid, to, name);
+                                relationship.getFromObjectName(),relationship.getToObjectName(), uid, to, relationship.getRelationshipName());
         System.out.println(new Query(skeleton).toString());
         return new Query(skeleton);
     }
@@ -88,10 +101,15 @@ public class QueryBuilder {
         return new Query(skeleton);
     }
 
+    public static Query schemaQueryRel(){
+        String skeleton = "CALL apoc.meta.schema";
+        return new Query(skeleton);
+    }
+
     private static Value createValues(Set<Attribute> set){
         List<Object> list = new ArrayList<>();
         for(Attribute attribute: set){
-            if (attribute.getName().equals("rolesId")){
+            if (isVirtualAttribute(attribute)){
                 continue;
             }
             list.add(attribute.getName());
