@@ -105,7 +105,14 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
 
     @Override
     public Schema schema() {
-
+        List<Record> entities;
+        try(Session session = this.connection.getDriver().session()){
+            entities = session.readTransaction(transaction -> {
+                Result result = transaction.run(QueryBuilder.schemaQueryRel());
+                return result.list();
+            });
+        }
+        RelationshipsMapper.getRelationshipsFromSchema(entities);
         List<Record> records;
         try(Session session = this.connection.getDriver().session()){
             records = session.readTransaction(transaction -> {

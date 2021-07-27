@@ -51,7 +51,7 @@ public class MainTest {
         // SCHEMAOP
         Schema schema =  connector.schema();
         List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
-        s.forEach(System.out::println);
+        //s.forEach(System.out::println);
 
 
 
