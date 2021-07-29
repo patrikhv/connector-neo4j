@@ -1,6 +1,7 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.*;
+import sk.tuke.mt.entity.Project;
 import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
 
@@ -25,21 +26,19 @@ public class MainTest {
 
         neo4jConnector connector = new neo4jConnector();
         connector.init(configuration);
-
+        Schema schema =  connector.schema();
         //connector.test();
-
-//        User obj = new User("Peter", 21);
-//        obj.setRolesId(new LinkedList<>());
-//        obj.getRolesId().add("0");
-//        obj.getRolesId().add("1");
+        User obj = new User("Denis", 33);
+        obj.getProjects().add("7");
+//        obj.getRoles().add("1");
 //        Role obj = new Role("student");
 //
-//        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
-//        OperationOptionsBuilder builder = new OperationOptionsBuilder();
+        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
+        OperationOptionsBuilder builder = new OperationOptionsBuilder();
 
         // CREATEOP
-         //Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
-         //System.out.printf("CREATE: Id: %s%n", id.getUidValue());
+         Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
+         System.out.printf("CREATE: Id: %s%n", id.getUidValue());
 
         // UPDATEOP
         //Uid id = connector.update(objectClass, new Uid("5"), first.getAttributes(), null );
@@ -49,9 +48,9 @@ public class MainTest {
         // connector.delete(objectClass, new Uid("1"), null);
 
         // SCHEMAOP
-        Schema schema =  connector.schema();
-        List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
-        //s.forEach(System.out::println);
+//        Schema schema =  connector.schema();
+//        List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
+//        s.forEach(System.out::println);
 
 
 

@@ -39,8 +39,8 @@ public class RelationshipsMapper {
         relationshipList = new LinkedList<>();
         // TODO rel properties
         JsonObject jsonObject = new JsonParser().parse(records.get(0).get(0).toString()).getAsJsonObject();
-        List<String>
-                elements = getKeys(jsonObject);
+        List<String> elements = getKeys(jsonObject);
+
         for (String element: elements){
             JsonObject elementJson = jsonObject.get(element).getAsJsonObject();
             String type = elementJson.get("type").getAsString();

@@ -37,7 +37,7 @@ import java.util.Set;
 
 
 @ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = neo4jConfiguration.class)
-public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, DeleteOp, SchemaOp, TestOp {
+public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp {
 
     private static final Log LOG = Log.getLog(neo4jConnector.class);
 
@@ -125,6 +125,15 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateOp, De
     }
 
     @Override
+    public Set<AttributeDelta> updateDelta(ObjectClass objectClass, Uid uid, Set<AttributeDelta> set, OperationOptions operationOptions) {
+        // https://stackoverflow.com/questions/59484662/storing-appending-a-list-of-values-as-a-property-of-a-relationship-in-neo4j
+
+
+        // TODO update of relationships
+
+        return null;
+    }
+
     public Uid update(ObjectClass objectClass, Uid uid, Set<Attribute> set, OperationOptions operationOptions) {
         // TODO update of relationships
         String id = null;
