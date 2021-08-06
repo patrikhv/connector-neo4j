@@ -23,6 +23,7 @@ import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.ConnectorClass;
 import org.identityconnectors.framework.spi.PoolableConnector;
 import org.identityconnectors.framework.spi.operations.*;
+import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
@@ -93,6 +94,31 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         }
     }
 
+    public void deleteRelationship(String uid, List<Object> values, Relationship relationship){
+        try (Session session = this.connection.getDriver().session()){
+            session.writeTransaction(transaction -> {
+                for (Object val: values){
+                    transaction.run(QueryBuilder.deleteRelationshipQuery(uid,(String) val, relationship));
+                }
+                return null;
+            });
+        }
+    }
+
+    public void deleteAllRelationships(String uid, Relationship relationship){
+        try (Session session = this.connection.getDriver().session()){
+            session.writeTransaction(transaction -> {
+                    transaction.run(QueryBuilder.deleteAllRelationshipQuery(uid, relationship));
+                return null;
+            });
+        }
+    }
+
+    public void updateRelationship(String uid, List<Object> values, Relationship relationship){
+        deleteAllRelationships(uid,relationship);
+        createRelationship(uid,values,relationship,null);
+    }
+
     @Override
     public void delete(ObjectClass objectClass, Uid uid, OperationOptions operationOptions) {
         try(Session session = this.connection.getDriver().session()){
@@ -126,25 +152,32 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
 
     @Override
     public Set<AttributeDelta> updateDelta(ObjectClass objectClass, Uid uid, Set<AttributeDelta> set, OperationOptions operationOptions) {
-        // https://stackoverflow.com/questions/59484662/storing-appending-a-list-of-values-as-a-property-of-a-relationship-in-neo4j
 
-
-        // TODO update of relationships
-
-        return null;
-    }
-
-    public Uid update(ObjectClass objectClass, Uid uid, Set<Attribute> set, OperationOptions operationOptions) {
-        // TODO update of relationships
-        String id = null;
         try (Session session = this.connection.getDriver().session()){
-            id = session.writeTransaction(transaction -> {
-                Result result = transaction.run(QueryBuilder.updateQuery(objectClass, uid, set));
-                return String.valueOf(result.single().get( 0 ).asInt());
+            session.writeTransaction(transaction -> {
+                Query query = QueryBuilder.updateDeltaQuery(objectClass, uid, set);
+                if (query != null){
+                    transaction.run(query);
+                }
+                return null;
             });
         }
-        if (id != null) {
-            return new Uid(id);
+
+        for (AttributeDelta attribute: set){
+            if (RelationshipsMapper.isVirtualAttributeForRelationship(objectClass,attribute)){
+                if (attribute.getValuesToAdd() != null){
+                    createRelationship(uid.getUidValue(),attribute.getValuesToAdd(),
+                            RelationshipsMapper.getRelationship(attribute),null);
+                }
+                if (attribute.getValuesToRemove() != null){
+                    deleteRelationship(uid.getUidValue(),attribute.getValuesToRemove(),
+                            RelationshipsMapper.getRelationship(attribute));
+                }
+                if (attribute.getValuesToReplace() != null){
+                    updateRelationship(uid.getUidValue(),attribute.getValuesToReplace(),
+                            RelationshipsMapper.getRelationship(attribute));
+                }
+            }
         }
         return null;
     }

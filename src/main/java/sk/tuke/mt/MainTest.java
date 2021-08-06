@@ -5,9 +5,7 @@ import sk.tuke.mt.entity.Project;
 import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /*
     JavaDoc
@@ -28,21 +26,39 @@ public class MainTest {
         connector.init(configuration);
         Schema schema =  connector.schema();
         //connector.test();
-        User obj = new User("Denis", 33);
-        obj.getProjects().add("7");
+//        User obj = new User("Denis", 33);
+//        obj.getProjects().add("7");
 //        obj.getRoles().add("1");
 //        Role obj = new Role("student");
 //
-        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
-        OperationOptionsBuilder builder = new OperationOptionsBuilder();
+//        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
+//        OperationOptionsBuilder builder = new OperationOptionsBuilder();
 
         // CREATEOP
-         Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
-         System.out.printf("CREATE: Id: %s%n", id.getUidValue());
+//         Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
+//         System.out.printf("CREATE: Id: %s%n", id.getUidValue());
 
         // UPDATEOP
-        //Uid id = connector.update(objectClass, new Uid("5"), first.getAttributes(), null );
+
+//        Set<AttributeDelta> set = new HashSet<>();
+//        AttributeDeltaBuilder attributeDeltaBuilder = new AttributeDeltaBuilder();
+//        attributeDeltaBuilder.setName("roles");
+//        attributeDeltaBuilder.addValueToAdd("2");
+//        set.add(attributeDeltaBuilder.build());
+
+
+//        Set<AttributeDelta> id = connector.updateDelta(objectClass, new Uid("8"), set,null );
         //System.out.printf("UPDATE: Id: %s%n", id.getUidValue());
+        // UPDATEOP relations
+
+        Set<AttributeDelta> set = new HashSet<>();
+        AttributeDeltaBuilder attributeDeltaBuilder = new AttributeDeltaBuilder();
+        attributeDeltaBuilder.setName("projects");
+        attributeDeltaBuilder.addValueToRemove("4");
+        set.add(attributeDeltaBuilder.build());
+
+        ObjectClass objectClass = new ObjectClass(User.class.getSimpleName());
+        Set<AttributeDelta> id = connector.updateDelta(objectClass, new Uid("8"), set,null );
 
         // DELETEOP
         // connector.delete(objectClass, new Uid("1"), null);

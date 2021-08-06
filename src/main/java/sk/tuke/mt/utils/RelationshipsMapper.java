@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.identityconnectors.framework.common.objects.Attribute;
+import org.identityconnectors.framework.common.objects.AttributeDelta;
+import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.neo4j.driver.Record;
 
 import java.util.LinkedList;
@@ -27,6 +29,25 @@ public class RelationshipsMapper {
             }
         }
         return null;
+    }
+
+    public static Relationship getRelationship(AttributeDelta attribute){
+        for (Relationship relationship : getRelationships()){
+            if (relationship.getVirtualAttributeName().equals(attribute.getName())){
+                return relationship;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isVirtualAttributeForRelationship(ObjectClass objectClass, AttributeDelta virtualAttribute){
+        for (Relationship relationship: getRelationships()){
+            if (relationship.getVirtualAttributeName().equals(virtualAttribute.getName())
+                    && relationship.getFromObjectName().equals(objectClass.getObjectClassValue())){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void addRelationship(String from, String to, String name){
