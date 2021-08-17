@@ -1,14 +1,12 @@
 package sk.tuke.mt.utils;
 
-import org.identityconnectors.framework.common.objects.Attribute;
-import org.identityconnectors.framework.common.objects.AttributeDelta;
-import org.identityconnectors.framework.common.objects.ObjectClass;
-import org.identityconnectors.framework.common.objects.Uid;
+import org.identityconnectors.framework.common.objects.*;
 import org.neo4j.driver.Query;
 import org.neo4j.driver.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.neo4j.driver.Values.parameters;
@@ -213,5 +211,21 @@ public class QueryBuilder {
         Object[] params = list.toArray(); // TODO check
 
         return parameters(params);
+    }
+
+    public static Query getSimpleGetQuery(ObjectClass objectClass, Map<String,Object> map, OperationOptions operationOptions){
+        System.out.println("sda");
+        String type = objectClass.getObjectClassValue();
+        boolean not = (boolean) map.get("not");
+        if (map.get("operation").equals("EQUALS")){
+            System.out.println("ss");
+            String skeleton = String.format(
+                    "MATCH (n:%s)\n" +
+                    "WHERE n.%s %s %s\n" +
+                    "RETURN n\n",type,map.get("left"),not?"!=":"=",map.get("right"));
+            System.out.println(new Query(skeleton).toString());
+            return new Query(skeleton);
+        }
+        return null;
     }
 }

@@ -1,9 +1,11 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.*;
+import org.identityconnectors.framework.common.objects.filter.*;
 import sk.tuke.mt.entity.Project;
 import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
+import sk.tuke.mt.utils.QueryBuilder;
 
 import java.util.*;
 
@@ -51,14 +53,14 @@ public class MainTest {
         //System.out.printf("UPDATE: Id: %s%n", id.getUidValue());
         // UPDATEOP relations
 
-        Set<AttributeDelta> set = new HashSet<>();
-        AttributeDeltaBuilder attributeDeltaBuilder = new AttributeDeltaBuilder();
-        attributeDeltaBuilder.setName("projects");
-        attributeDeltaBuilder.addValueToRemove("4");
-        set.add(attributeDeltaBuilder.build());
-
-        ObjectClass objectClass = new ObjectClass(User.class.getSimpleName());
-        Set<AttributeDelta> id = connector.updateDelta(objectClass, new Uid("8"), set,null );
+//        Set<AttributeDelta> set = new HashSet<>();
+//        AttributeDeltaBuilder attributeDeltaBuilder = new AttributeDeltaBuilder();
+//        attributeDeltaBuilder.setName("projects");
+//        attributeDeltaBuilder.addValueToRemove("4");
+//        set.add(attributeDeltaBuilder.build());
+//
+//        ObjectClass objectClass = new ObjectClass(User.class.getSimpleName());
+//        Set<AttributeDelta> id = connector.updateDelta(objectClass, new Uid("8"), set,null );
 
         // DELETEOP
         // connector.delete(objectClass, new Uid("1"), null);
@@ -67,8 +69,13 @@ public class MainTest {
 //        Schema schema =  connector.schema();
 //        List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
 //        s.forEach(System.out::println);
+        Map<String,Object> m = new HashMap<>();
+        m.put("operation","EQUALS");
+        m.put("not",false);
+        m.put("left","userName");
+        m.put("right","Peter");
 
-
+        QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),m,null);
 
         connector.dispose();
     }

@@ -19,6 +19,7 @@ package sk.tuke.mt;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectionFailedException;
 import org.identityconnectors.framework.common.objects.*;
+import org.identityconnectors.framework.common.objects.filter.FilterTranslator;
 import org.identityconnectors.framework.spi.Configuration;
 import org.identityconnectors.framework.spi.ConnectorClass;
 import org.identityconnectors.framework.spi.PoolableConnector;
@@ -33,12 +34,13 @@ import sk.tuke.mt.utils.RelationshipsMapper;
 import sk.tuke.mt.utils.SchemaHelper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 
 @ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = neo4jConfiguration.class)
-public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp {
+public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp, SearchOp<Map<String,Object>> {
 
     private static final Log LOG = Log.getLog(neo4jConnector.class);
 
@@ -162,7 +164,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
                 return null;
             });
         }
-
+        // Relationships update
         for (AttributeDelta attribute: set){
             if (RelationshipsMapper.isVirtualAttributeForRelationship(objectClass,attribute)){
                 if (attribute.getValuesToAdd() != null){
@@ -214,5 +216,17 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             LOG.error("Check alive: failed! Reconnecting");
             throw new ConnectionFailedException(e);
         }
+    }
+
+
+    @Override
+    public FilterTranslator<Map<String,Object>> createFilterTranslator(ObjectClass objectClass, OperationOptions operationOptions) {
+        return new NeoFilterTranslator();
+    }
+
+    @Override
+    public void executeQuery(ObjectClass objectClass, Map<String,Object> m, ResultsHandler resultsHandler, OperationOptions operationOptions) {
+        String query = "";
+
     }
 }
