@@ -28,6 +28,7 @@ import org.neo4j.driver.Query;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
+import org.neo4j.driver.types.Node;
 import sk.tuke.mt.utils.QueryBuilder;
 import sk.tuke.mt.utils.Relationship;
 import sk.tuke.mt.utils.RelationshipsMapper;
@@ -226,7 +227,25 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
 
     @Override
     public void executeQuery(ObjectClass objectClass, Map<String,Object> m, ResultsHandler resultsHandler, OperationOptions operationOptions) {
-        String query = "";
+        List<Record> list;
+        try (Session session = this.connection.getDriver().session()){
+            list = session.readTransaction(transaction -> {
+                Result result = transaction.run(QueryBuilder.getSimpleGetQuery(objectClass,m,operationOptions));
+                return result.list();
+            });
+        }
+        list.forEach(System.out::println);
+        for (Record record :list){
+            ConnectorObjectBuilder connectorObjectBuilder = new ConnectorObjectBuilder();
+            Node node = record.get(0).asNode();
+
+            connectorObjectBuilder.addAttribute("userName",node.get("userName").asString());
+            connectorObjectBuilder.addAttribute("age",node.get("age").asInt());
+            connectorObjectBuilder.setUid(new Uid(String.valueOf(node.id())));
+            connectorObjectBuilder.setName(new Name("RANDOM NAME"));
+            connectorObjectBuilder.setObjectClass(objectClass);
+            resultsHandler.handle(connectorObjectBuilder.build());
+        }
 
     }
 }

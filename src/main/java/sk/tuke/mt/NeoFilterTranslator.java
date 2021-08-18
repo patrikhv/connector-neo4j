@@ -1,7 +1,5 @@
 package sk.tuke.mt;
 
-import org.identityconnectors.framework.common.objects.Attribute;
-import org.identityconnectors.framework.common.objects.ConnectorObject;
 import org.identityconnectors.framework.common.objects.filter.*;
 import org.identityconnectors.framework.common.objects.AttributeUtil;
 import org.identityconnectors.common.StringUtil;
@@ -16,6 +14,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<Map<String,Obj
         Map<String, Object> map = new HashMap<String, Object>();
         String name = filter.getAttribute().getName();
         String value = AttributeUtil.getAsStringValue(filter.getAttribute());
+        // TODO only String chceck????
         if (StringUtil.isBlank(value)) {
             return null;
         } else {

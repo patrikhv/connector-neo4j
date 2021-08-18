@@ -69,14 +69,19 @@ public class MainTest {
 //        Schema schema =  connector.schema();
 //        List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
 //        s.forEach(System.out::println);
-        Map<String,Object> m = new HashMap<>();
-        m.put("operation","EQUALS");
-        m.put("not",false);
-        m.put("left","userName");
-        m.put("right","Peter");
 
-        QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),m,null);
+        AttributeBuilder attributeBuilder = new AttributeBuilder();
+        attributeBuilder.setName("userName");
+        attributeBuilder.addValue("Peter");
 
+
+
+        EqualsFilter equalsFilter = new EqualsFilter(attributeBuilder.build());
+
+        //QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),m,null);
+        FilterTranslator<Map<String,Object>> ft = connector.createFilterTranslator(new ObjectClass("User"),null);
+
+        connector.executeQuery(new ObjectClass("User"),ft.translate(equalsFilter).get(0),new NeoResultHandler(),null);
         connector.dispose();
     }
 }
