@@ -70,18 +70,14 @@ public class MainTest {
 //        List<ObjectClassInfo> s = new ArrayList<>(schema.getObjectClassInfo());
 //        s.forEach(System.out::println);
 
-        AttributeBuilder attributeBuilder = new AttributeBuilder();
-        attributeBuilder.setName("userName");
-        attributeBuilder.addValue("Peter");
 
 
+        //Filter filter = new (new AttributeBuilder().setName("age").addValue(1259).build());
+        Filter filter = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("e").build());
+        FilterTranslator<String> ft = connector.createFilterTranslator(new ObjectClass("User"),null);
+        //QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),ft.translate(equalsFilter).get(0),null);
 
-        EqualsFilter equalsFilter = new EqualsFilter(attributeBuilder.build());
-
-        //QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),m,null);
-        FilterTranslator<Map<String,Object>> ft = connector.createFilterTranslator(new ObjectClass("User"),null);
-
-        connector.executeQuery(new ObjectClass("User"),ft.translate(equalsFilter).get(0),new NeoResultHandler(),null);
+        connector.executeQuery(new ObjectClass("User"),ft.translate(filter).get(0),new NeoResultHandler(),null);
         connector.dispose();
     }
 }

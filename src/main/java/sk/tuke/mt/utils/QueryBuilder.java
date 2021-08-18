@@ -213,17 +213,15 @@ public class QueryBuilder {
         return parameters(params);
     }
 
-    public static Query getSimpleGetQuery(ObjectClass objectClass, Map<String,Object> map, OperationOptions operationOptions){
+    public static Query getSimpleGetQuery(ObjectClass objectClass, String subQuery, OperationOptions operationOptions){
         String type = objectClass.getObjectClassValue();
-        boolean not = (boolean) map.get("not");
-        if (map.get("operation").equals("EQUALS")){
-            String skeleton = String.format(
-                    "MATCH (n:%s)\n" +
-                    "WHERE n.%s %s \"%s\"\n" +
-                    "RETURN n\n",type,map.get("left"),not?"!=":"=",map.get("right"));
+        String skeleton = String.format(
+                """
+                        MATCH (n:%s)
+                        WHERE %s
+                        RETURN n
+                        """,type,subQuery);
             //System.out.println(new Query(skeleton).toString());
             return new Query(skeleton);
-        }
-        return null;
     }
 }

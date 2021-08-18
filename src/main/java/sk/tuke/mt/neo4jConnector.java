@@ -29,19 +29,18 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.types.Node;
+import org.neo4j.driver.types.Type;
+import org.neo4j.driver.types.TypeSystem;
 import sk.tuke.mt.utils.QueryBuilder;
 import sk.tuke.mt.utils.Relationship;
 import sk.tuke.mt.utils.RelationshipsMapper;
 import sk.tuke.mt.utils.SchemaHelper;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = neo4jConfiguration.class)
-public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp, SearchOp<Map<String,Object>> {
+public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp, SearchOp<String> {
 
     private static final Log LOG = Log.getLog(neo4jConnector.class);
 
@@ -221,31 +220,64 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
 
 
     @Override
-    public FilterTranslator<Map<String,Object>> createFilterTranslator(ObjectClass objectClass, OperationOptions operationOptions) {
+    public FilterTranslator<String> createFilterTranslator(ObjectClass objectClass, OperationOptions operationOptions) {
         return new NeoFilterTranslator();
     }
 
     @Override
-    public void executeQuery(ObjectClass objectClass, Map<String,Object> m, ResultsHandler resultsHandler, OperationOptions operationOptions) {
+    public void executeQuery(ObjectClass objectClass, String subQuery, ResultsHandler resultsHandler, OperationOptions operationOptions) {
         List<Record> list;
         try (Session session = this.connection.getDriver().session()){
             list = session.readTransaction(transaction -> {
-                Result result = transaction.run(QueryBuilder.getSimpleGetQuery(objectClass,m,operationOptions));
+                Result result = transaction.run(QueryBuilder.getSimpleGetQuery(objectClass,subQuery,operationOptions));
                 return result.list();
             });
         }
-        list.forEach(System.out::println);
         for (Record record :list){
             ConnectorObjectBuilder connectorObjectBuilder = new ConnectorObjectBuilder();
             Node node = record.get(0).asNode();
-
-            connectorObjectBuilder.addAttribute("userName",node.get("userName").asString());
-            connectorObjectBuilder.addAttribute("age",node.get("age").asInt());
+            for (String attributeKey: node.keys()){
+                convertTypeAndAdd(connectorObjectBuilder,attributeKey,node);
+            }
             connectorObjectBuilder.setUid(new Uid(String.valueOf(node.id())));
             connectorObjectBuilder.setName(new Name("RANDOM NAME"));
             connectorObjectBuilder.setObjectClass(objectClass);
             resultsHandler.handle(connectorObjectBuilder.build());
         }
+
+    }
+
+    private void convertTypeAndAdd(ConnectorObjectBuilder connectorObjectBuilder, String attributeKey ,Node node){
+        // TODO CATCH EXCEPTIONS WITH TYPE CONVERSIONS
+        String type = node.get(attributeKey).type().name();
+        //System.out.println(type);
+        Object value;
+        switch (type){
+            case "NULL" -> value = null;
+            //TODO LIST PROBLEMS
+            case "LIST" -> value = null;  //node.get(attributeKey).asList().toArray();
+            case "LIST OF ANY?" -> value = null; //node.get(attributeKey).asList();
+            case "MAP" -> value = node.get(attributeKey).asMap();
+            case "BOOLEAN" -> value = node.get(attributeKey).asBoolean();
+            case "INTEGER" -> value = node.get(attributeKey).asInt();
+            case "FLOAT" -> value = node.get(attributeKey).asFloat();
+            case "STRING" -> value = node.get(attributeKey).asString();
+            case "BYTES" -> value = (Object) node.get(attributeKey).asByteArray();
+            case "DATE" -> value = node.get(attributeKey).asLocalDate();
+            case "TIME" -> value = node.get(attributeKey).asOffsetTime();
+            case "LOCAL_TIME" -> value = node.get(attributeKey).asLocalTime();
+            case "DATE_TIME" -> value = node.get(attributeKey).asZonedDateTime();
+            case "LOCAL_DATE_TIME" -> value = node.get(attributeKey).asLocalDateTime();
+            case "POINT" -> value = node.get(attributeKey).asPoint();
+            case "NODE" -> value = node.get(attributeKey).asNode();
+            case "RELATIONSHIP" -> value = node.get(attributeKey).asRelationship();
+            case "PATH" -> value = node.get(attributeKey).asPath();
+            default -> value = node.get(attributeKey).asObject();
+        }
+        if (value != null){
+            connectorObjectBuilder.addAttribute(attributeKey, value);
+        }
+
 
     }
 }
