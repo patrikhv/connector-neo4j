@@ -213,15 +213,36 @@ public class QueryBuilder {
         return parameters(params);
     }
 
-    public static Query getSimpleGetQuery(ObjectClass objectClass, String subQuery, OperationOptions operationOptions){
+    public static Query getQuery(ObjectClass objectClass, String subQuery, OperationOptions operationOptions){
+        String type = objectClass.getObjectClassValue();
+        String skeleton;
+        if (subQuery == null){
+            skeleton = String.format(
+                    """
+                            MATCH (n:%s)
+                            RETURN n
+                            """,type);
+        }else {
+            skeleton = String.format(
+                    """
+                            MATCH (n:%s)
+                            WHERE %s
+                            RETURN n
+                            """,type,subQuery);
+        }
+
+            //System.out.println(new Query(skeleton).toString());
+            return new Query(skeleton);
+    }
+
+    public static Query getNodeRelationships(ObjectClass objectClass, String uid){
         String type = objectClass.getObjectClassValue();
         String skeleton = String.format(
                 """
-                        MATCH (n:%s)
-                        WHERE %s
-                        RETURN n
-                        """,type,subQuery);
-            //System.out.println(new Query(skeleton).toString());
-            return new Query(skeleton);
+                        MATCH (n:%s)-[r]-(a)
+                        WHERE ID(n) = %s
+                        RETURN type(r) AS relationship, labels(a) as label, collect(id(a)) as id
+                        """, type, uid);
+        return new Query(skeleton);
     }
 }

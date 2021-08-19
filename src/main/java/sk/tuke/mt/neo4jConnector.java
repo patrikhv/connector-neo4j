@@ -29,8 +29,6 @@ import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;
 import org.neo4j.driver.Session;
 import org.neo4j.driver.types.Node;
-import org.neo4j.driver.types.Type;
-import org.neo4j.driver.types.TypeSystem;
 import sk.tuke.mt.utils.QueryBuilder;
 import sk.tuke.mt.utils.Relationship;
 import sk.tuke.mt.utils.RelationshipsMapper;
@@ -229,22 +227,53 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         List<Record> list;
         try (Session session = this.connection.getDriver().session()){
             list = session.readTransaction(transaction -> {
-                Result result = transaction.run(QueryBuilder.getSimpleGetQuery(objectClass,subQuery,operationOptions));
+                Result result = transaction.run(QueryBuilder.getQuery(objectClass,subQuery,operationOptions));
                 return result.list();
             });
         }
+
         for (Record record :list){
-            ConnectorObjectBuilder connectorObjectBuilder = new ConnectorObjectBuilder();
-            Node node = record.get(0).asNode();
-            for (String attributeKey: node.keys()){
-                convertTypeAndAdd(connectorObjectBuilder,attributeKey,node);
-            }
-            connectorObjectBuilder.setUid(new Uid(String.valueOf(node.id())));
-            connectorObjectBuilder.setName(new Name("RANDOM NAME"));
-            connectorObjectBuilder.setObjectClass(objectClass);
-            resultsHandler.handle(connectorObjectBuilder.build());
+            ConnectorObject connectorObject = buildConnectorObjectFromRecord(record, objectClass);
+            resultsHandler.handle(connectorObject);
         }
 
+    }
+
+    private ConnectorObject buildConnectorObjectFromRecord(Record record, ObjectClass objectClass){
+        ConnectorObjectBuilder connectorObjectBuilder = new ConnectorObjectBuilder();
+        Node node = record.get(0).asNode();
+        for (String attributeKey: node.keys()){
+            convertTypeAndAdd(connectorObjectBuilder,attributeKey,node);
+        }
+        addRelationshipsAttributes(objectClass, String.valueOf(node.id()),connectorObjectBuilder);
+        connectorObjectBuilder.setUid(new Uid(String.valueOf(node.id())));
+        connectorObjectBuilder.setName(new Name("RANDOM NAME"));
+        connectorObjectBuilder.setObjectClass(objectClass);
+        return connectorObjectBuilder.build();
+    }
+
+    private void addRelationshipsAttributes(ObjectClass objectClass,String uid, ConnectorObjectBuilder connectorObjectBuilder){
+        List<Record> list;
+        try (Session session = this.connection.getDriver().session()){
+            list = session.readTransaction(transaction -> {
+                Result result = transaction.run(QueryBuilder.getNodeRelationships(objectClass,uid));
+                return result.list();
+            });
+        }
+        list.forEach(System.out::println);
+        for (Record record: list){
+            String relationshipName = record.get("relationship").asString();
+            String label = record.get("label").asList().get(0).toString();
+            List<String> ids = new ArrayList<>();
+            for (Object value: record.get("id").asList()){
+                ids.add(String.valueOf(value));
+            }
+            Relationship relationship = RelationshipsMapper.getRelationshipByName(relationshipName);
+            if (relationship != null){
+                connectorObjectBuilder.addAttribute(relationship.getVirtualAttributeName(), ids);
+            }
+
+        }
     }
 
     private void convertTypeAndAdd(ConnectorObjectBuilder connectorObjectBuilder, String attributeKey ,Node node){
@@ -254,9 +283,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         Object value;
         switch (type){
             case "NULL" -> value = null;
-            //TODO LIST PROBLEMS
-            case "LIST" -> value = null;  //node.get(attributeKey).asList().toArray();
-            case "LIST OF ANY?" -> value = null; //node.get(attributeKey).asList();
+            case "LIST", "LIST OF ANY?" -> value = node.get(attributeKey).asList();
             case "MAP" -> value = node.get(attributeKey).asMap();
             case "BOOLEAN" -> value = node.get(attributeKey).asBoolean();
             case "INTEGER" -> value = node.get(attributeKey).asInt();
@@ -275,9 +302,13 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             default -> value = node.get(attributeKey).asObject();
         }
         if (value != null){
+            // We need to change SingletonList for standard list
+            if (value instanceof List){
+                connectorObjectBuilder.addAttribute(attributeKey, new ArrayList<>((List<?>) value));
+                return;
+            }
             connectorObjectBuilder.addAttribute(attributeKey, value);
+
         }
-
-
     }
 }

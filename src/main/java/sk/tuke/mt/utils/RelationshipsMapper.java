@@ -31,6 +31,15 @@ public class RelationshipsMapper {
         return null;
     }
 
+    public static Relationship getRelationshipByName(String relationshipName){
+        for (Relationship relationship : getRelationships()){
+            if (relationship.getRelationshipName().equals(relationshipName)){
+                return relationship;
+            }
+        }
+        return null;
+    }
+
     public static Relationship getRelationship(AttributeDelta attribute){
         for (Relationship relationship : getRelationships()){
             if (relationship.getVirtualAttributeName().equals(attribute.getName())){

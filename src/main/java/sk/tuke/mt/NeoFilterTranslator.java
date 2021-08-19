@@ -67,7 +67,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s CONTAINS %s", attributeName, prepareValue(attributeValue)
+                "%sn.%s CONTAINS %s",not?"NOT ":"" ,attributeName, prepareValue(attributeValue)
         );
     }
 
@@ -77,7 +77,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s ENDS WITH %s", attributeName, prepareValue(attributeValue)
+                "%sn.%s ENDS WITH %s", not?"NOT ":"" ,attributeName, prepareValue(attributeValue)
         );
     }
 
@@ -87,7 +87,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s STARTS WITH %s", attributeName, prepareValue(attributeValue)
+                "%sn.%s STARTS WITH %s", not?"NOT ":"" ,attributeName, prepareValue(attributeValue)
         );
     }
 
@@ -97,7 +97,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s > %s", attributeName, prepareValue(attributeValue)
+                "n.%s %s %s", attributeName,not?"<=":">" ,prepareValue(attributeValue)
         );
     }
 
@@ -107,7 +107,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s >= %s", attributeName, prepareValue(attributeValue)
+                "n.%s %s %s", attributeName,not?"<":">="  ,prepareValue(attributeValue)
         );
     }
 
@@ -117,7 +117,7 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s < %s", attributeName, prepareValue(attributeValue)
+                "n.%s %s %s", attributeName, not?">=":"<"  ,prepareValue(attributeValue)
         );
     }
 
@@ -127,9 +127,23 @@ public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
         String attributeName = attribute.getName();
         List<Object> attributeValue = attribute.getValue();
         return String.format(
-                "n.%s <= %s", attributeName, prepareValue(attributeValue)
+                "n.%s %s %s", attributeName, not?">":"<=", prepareValue(attributeValue)
         );
     }
 
+    @Override
+    protected String createAndExpression(String leftExpression, String rightExpression) {
+        return "(" + leftExpression + ") AND (" + rightExpression + ")";
+    }
 
+    @Override
+    protected String createOrExpression(String leftExpression, String rightExpression) {
+        return "(" + leftExpression + ") OR (" + rightExpression + ")";
+    }
+
+    @Override
+    protected String createContainsAllValuesExpression(ContainsAllValuesFilter filter, boolean not) {
+        //TODO
+        return super.createContainsAllValuesExpression(filter, not);
+    }
 }

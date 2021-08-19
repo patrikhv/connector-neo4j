@@ -2,12 +2,9 @@ package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.common.objects.filter.*;
-import sk.tuke.mt.entity.Project;
-import sk.tuke.mt.entity.Role;
-import sk.tuke.mt.entity.User;
-import sk.tuke.mt.utils.QueryBuilder;
 
-import java.util.*;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /*
     JavaDoc
@@ -73,11 +70,15 @@ public class MainTest {
 
 
         //Filter filter = new (new AttributeBuilder().setName("age").addValue(1259).build());
-        Filter filter = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("e").build());
+        Filter filterA = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("Peter").build());
+        Filter filterB = new LessThanFilter(new AttributeBuilder().setName("age").addValue(1000).build());
+        Filter filterC = new AndFilter(filterA,filterB);
+        Filter filterD = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("John").build());
+        Filter filterFinal = new OrFilter(filterC,filterD);
         FilterTranslator<String> ft = connector.createFilterTranslator(new ObjectClass("User"),null);
         //QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),ft.translate(equalsFilter).get(0),null);
 
-        connector.executeQuery(new ObjectClass("User"),ft.translate(filter).get(0),new NeoResultHandler(),null);
+        connector.executeQuery(new ObjectClass("User"),ft.translate(filterFinal).get(0),new DummyResultHandler(),null);
         connector.dispose();
     }
 }
