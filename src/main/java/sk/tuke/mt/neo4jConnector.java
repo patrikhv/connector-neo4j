@@ -88,6 +88,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             id = session.writeTransaction(transaction -> {
                 for (Object val: values){
                     Result result = transaction.run(QueryBuilder.createRelationshipQuery(uid,(String) val, relationship, params));
+                    return String.valueOf(result.single().get( 0 ).asInt());
                 }
                 return null;
             });
@@ -139,7 +140,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             });
         }
         RelationshipsMapper.getRelationshipsFromSchema(entities);
-        RelationshipsMapper.relationshipList.forEach(relationship -> System.out.println(relationship.toString()));
+        //RelationshipsMapper.relationshipList.forEach(relationship -> System.out.println(relationship.toString()));
         List<Record> records;
         try(Session session = this.connection.getDriver().session()){
             records = session.readTransaction(transaction -> {
@@ -191,7 +192,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             connection.getDriver().verifyConnectivity();
             LOG.info("Connection test: finished");
         } catch (Exception e){
-            LOG.error("Connection test: failed!");
+            LOG.error("Connection test: " + e.getMessage());
             connection.dispose();
             throw new ConnectionFailedException(e);
         }
@@ -199,10 +200,10 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
 
     protected void cleanupBeforeTest(){
         try {
-            LOG.ok("Closing connection ... to reopen them again");
+            LOG.ok("Closing connection ... to reopen it again");
             connection.dispose();
         }catch (Exception e){
-            LOG.error("Connection test: failed!");
+            LOG.error("Connection test: " + e.getMessage());
         }
     }
 
@@ -232,7 +233,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             });
         }
 
-        for (Record record :list){
+        for (Record record: list){
             ConnectorObject connectorObject = buildConnectorObjectFromRecord(record, objectClass);
             resultsHandler.handle(connectorObject);
         }
@@ -247,7 +248,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         }
         addRelationshipsAttributes(objectClass, String.valueOf(node.id()),connectorObjectBuilder);
         connectorObjectBuilder.setUid(new Uid(String.valueOf(node.id())));
-        connectorObjectBuilder.setName(new Name("RANDOM NAME"));
+        connectorObjectBuilder.setName(new Name(node.get(Name.NAME).asString("")));
         connectorObjectBuilder.setObjectClass(objectClass);
         return connectorObjectBuilder.build();
     }
@@ -260,7 +261,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
                 return result.list();
             });
         }
-        list.forEach(System.out::println);
+        // list.forEach(System.out::println);
         for (Record record: list){
             String relationshipName = record.get("relationship").asString();
             String label = record.get("label").asList().get(0).toString();

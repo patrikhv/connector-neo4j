@@ -13,7 +13,7 @@ public class SchemaHelper {
         List<String> nodeNames = getNodeNames(records);
         HashMap<String, List<PropertyMapper>> properties = getProperties(nodeNames, records);
         for (String nodeName : nodeNames){
-            //properties.get(nodeName).forEach(System.out::println);
+            properties.get(nodeName).forEach(System.out::println);
         }
 
         return generateSchema(properties);
@@ -26,10 +26,11 @@ public class SchemaHelper {
                 ObjectClassInfoBuilder objectClassBuilder = new ObjectClassInfoBuilder();
                 objectClassBuilder.setType(name);
                 list.forEach(property -> {
-                    AttributeInfoBuilder uidAib = new AttributeInfoBuilder(Uid.NAME);
+                    AttributeInfoBuilder uidAib = new AttributeInfoBuilder();
                     uidAib.setName(property.getPropertyName());
-                    uidAib.setType(property.getPropertyJavaType()); // TODO fix "Attribute type 'interface java.util.List' is not supported."
+                    uidAib.setType(property.getPropertyJavaType());
                     uidAib.setRequired(property.isMandatory());
+                    uidAib.setMultiValued(property.isMultivalued());
                     objectClassBuilder.addAttributeInfo(uidAib.build());
                 });
                 builder.defineObjectClass(objectClassBuilder.build());

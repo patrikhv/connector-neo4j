@@ -1,6 +1,11 @@
 package sk.tuke.mt.utils;
 
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
 public class PropertyMapper {
 
     private String propertyName;
@@ -11,6 +16,10 @@ public class PropertyMapper {
         this.propertyName = propertyName;
         this.propertyNeoType = propertyNeoType;
         this.mandatory = mandatory;
+    }
+
+    public boolean isMultivalued(){
+        return this.propertyNeoType.toLowerCase().contains("array");
     }
 
     public String getPropertyName() {
@@ -38,18 +47,22 @@ public class PropertyMapper {
     }
 
     public Class<?> getPropertyJavaType(){
-        // TODO set neo4j db not to generate arrays for single values
         // TODO refactor this method and fix mappings
-        //System.out.println(this.getPropertyNeoType());
-        return switch (this.propertyNeoType) {
-            case "StringArray" -> String.class; //
-            case "String" -> String.class;
-            case "Integer" -> Long.class;
-            case "Long" -> Long.class;
-            case "LongArray" -> Long.class;
-            case "Boolean" -> Boolean.class;
-            default -> Object.class;
-        };
+        Map<String, Class<?>> types = Map.of(
+                "String",String.class,
+                "Integer", Integer.class,
+                "Long", Long.class,
+                "Float", Float.class,
+                "Double", Double.class,
+                "Boolean", Boolean.class,
+                "DateTime", ZonedDateTime.class); //TODO other date types ????
+        for (String key: types.keySet()){
+            if (this.propertyNeoType.contains(key)){
+                return types.get(key);
+            }
+        }
+        return null;
+
     }
 
     @Override

@@ -67,7 +67,6 @@ public class RelationshipsMapper {
 
     public static void getRelationshipsFromSchema(List<Record> records){
         relationshipList = new LinkedList<>();
-        // TODO rel properties
         JsonObject jsonObject = new JsonParser().parse(records.get(0).get(0).toString()).getAsJsonObject();
         List<String> elements = getKeys(jsonObject);
 

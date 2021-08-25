@@ -2,16 +2,11 @@ package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.filter.*;
-import org.identityconnectors.framework.common.objects.AttributeUtil;
-import org.identityconnectors.common.StringUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class NeoFilterTranslator extends AbstractFilterTranslator<String> {
-    //https://github.com/Tirasa/ConnIdDBBundle/blob/master/scriptedsql/src/main/java/net/tirasa/connid/bundles/db/scriptedsql/ScriptedSQLFilterTranslator.java
 
     private Object prepareValue(List<Object> attributeValue){
         List<Object> results = new ArrayList<>();

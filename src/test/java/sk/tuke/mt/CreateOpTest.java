@@ -3,6 +3,7 @@ package sk.tuke.mt;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 import org.identityconnectors.framework.common.objects.OperationOptionsBuilder;
 import org.identityconnectors.framework.common.objects.Uid;
+import org.identityconnectors.framework.spi.Connector;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import sk.tuke.mt.entity.Project;
@@ -10,19 +11,11 @@ import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
 
 
-public class CreateOpTest {
-
-    private neo4jConnector connector;
+public class CreateOpTest extends BaseTest{
 
     @BeforeClass
     public void setUp(){
-        neo4jConfiguration configuration = new neo4jConfiguration();
-        configuration.setUri("bolt://localhost:7687");
-        configuration.setUserName("neo4j");
-        configuration.setPassword("qetuop");
-
-        this.connector = new neo4jConnector();
-        connector.init(configuration);
+        this.connector = createConnector();
     }
 
     @Test

@@ -67,7 +67,6 @@ public class QueryBuilder {
                                 "CREATE (u)-[s:%s]->(r)\n"+
                                 "RETURN ID(s)",
                                 relationship.getFromObjectName(),relationship.getToObjectName(), uid, to, relationship.getRelationshipName());
-        System.out.println(new Query(skeleton).toString());
         return new Query(skeleton);
     }
 
@@ -78,7 +77,6 @@ public class QueryBuilder {
                                 "DELETE r",
                         relationship.getFromObjectName(),relationship.getRelationshipName(),relationship.getToObjectName(),
                         uid, to);
-        System.out.println(new Query(skeleton).toString());
         return new Query(skeleton);
     }
 
@@ -89,7 +87,6 @@ public class QueryBuilder {
                                 "DELETE r",
                         relationship.getFromObjectName(), relationship.getRelationshipName(), relationship.getToObjectName(),
                         uid);
-        System.out.println(new Query(skeleton).toString());
         return new Query(skeleton);
     }
 
@@ -106,7 +103,6 @@ public class QueryBuilder {
     }
 
     public static Query updateDeltaQuery(ObjectClass objectClass,Uid uid,Set<AttributeDelta> set) {
-        // SET n.id = coalesce(n.id, []) + n.additionalId
         String type = objectClass.getObjectClassValue();
         List<String> paramsToUpdate = new ArrayList<>();
         for (AttributeDelta attribute : set) {
@@ -143,7 +139,6 @@ public class QueryBuilder {
                         type, uid.getUidValue(), params);
 
         Value values = createValuesFromDelta(set);
-        System.out.println(new Query(skeleton,values).toString());
         return new Query(skeleton,values);
     }
 
@@ -231,7 +226,7 @@ public class QueryBuilder {
                             """,type,subQuery);
         }
 
-            //System.out.println(new Query(skeleton).toString());
+            System.out.println(new Query(skeleton).toString());
             return new Query(skeleton);
     }
 

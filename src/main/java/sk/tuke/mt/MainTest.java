@@ -2,6 +2,8 @@ package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.*;
 import org.identityconnectors.framework.common.objects.filter.*;
+import sk.tuke.mt.entity.Role;
+import sk.tuke.mt.entity.User;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -24,6 +26,7 @@ public class MainTest {
         neo4jConnector connector = new neo4jConnector();
         connector.init(configuration);
         Schema schema =  connector.schema();
+        System.out.println(schema.toString());
         //connector.test();
 //        User obj = new User("Denis", 33);
 //        obj.getProjects().add("7");
@@ -70,15 +73,30 @@ public class MainTest {
 
 
         //Filter filter = new (new AttributeBuilder().setName("age").addValue(1259).build());
-        Filter filterA = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("Peter").build());
-        Filter filterB = new LessThanFilter(new AttributeBuilder().setName("age").addValue(1000).build());
-        Filter filterC = new AndFilter(filterA,filterB);
-        Filter filterD = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("John").build());
-        Filter filterFinal = new OrFilter(filterC,filterD);
-        FilterTranslator<String> ft = connector.createFilterTranslator(new ObjectClass("User"),null);
+//        Filter filterA = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("Peter").build());
+//        Filter filterB = new LessThanFilter(new AttributeBuilder().setName("age").addValue(1000).build());
+//        Filter filterC = new AndFilter(filterA,filterB);
+//        Filter filterD = new ContainsFilter(new AttributeBuilder().setName("userName").addValue("John").build());
+//        Filter filterFinal = new OrFilter(filterC,filterD);
+//        FilterTranslator<String> ft = connector.createFilterTranslator(new ObjectClass("User"),null);
         //QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),ft.translate(equalsFilter).get(0),null);
 
-        connector.executeQuery(new ObjectClass("User"),ft.translate(filterFinal).get(0),new DummyResultHandler(),null);
-        connector.dispose();
+//        connector.executeQuery(new ObjectClass("User"),ft.translate(filterFinal).get(0),new DummyResultHandler(),null);
+//        connector.dispose();
+    }
+
+    public void createOp(neo4jConnector connector){
+        connector.test();
+        User obj = new User("Denis", 33);
+        obj.getProjects().add("7");
+        obj.getRoles().add("1");
+        //Role obj = new Role("student");
+
+        ObjectClass objectClass = new ObjectClass(obj.getClass().getSimpleName());
+        OperationOptionsBuilder builder = new OperationOptionsBuilder();
+
+        // CREATEOP
+         Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
+         System.out.printf("CREATE: Id: %s%n", id.getUidValue());
     }
 }
