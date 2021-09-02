@@ -283,24 +283,25 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         //System.out.println(type);
         Object value;
         switch (type){
-            case "NULL" -> value = null;
-            case "LIST", "LIST OF ANY?" -> value = node.get(attributeKey).asList();
-            case "MAP" -> value = node.get(attributeKey).asMap();
-            case "BOOLEAN" -> value = node.get(attributeKey).asBoolean();
-            case "INTEGER" -> value = node.get(attributeKey).asInt();
-            case "FLOAT" -> value = node.get(attributeKey).asFloat();
-            case "STRING" -> value = node.get(attributeKey).asString();
-            case "BYTES" -> value = (Object) node.get(attributeKey).asByteArray();
-            case "DATE" -> value = node.get(attributeKey).asLocalDate();
-            case "TIME" -> value = node.get(attributeKey).asOffsetTime();
-            case "LOCAL_TIME" -> value = node.get(attributeKey).asLocalTime();
-            case "DATE_TIME" -> value = node.get(attributeKey).asZonedDateTime();
-            case "LOCAL_DATE_TIME" -> value = node.get(attributeKey).asLocalDateTime();
-            case "POINT" -> value = node.get(attributeKey).asPoint();
-            case "NODE" -> value = node.get(attributeKey).asNode();
-            case "RELATIONSHIP" -> value = node.get(attributeKey).asRelationship();
-            case "PATH" -> value = node.get(attributeKey).asPath();
-            default -> value = node.get(attributeKey).asObject();
+            case "NULL": value = null; break;
+            case "LIST": value = node.get(attributeKey).asList(); break;
+            case "LIST OF ANY?": value = node.get(attributeKey).asList(); break;
+            case "MAP": value = node.get(attributeKey).asMap(); break;
+            case "BOOLEAN": value = node.get(attributeKey).asBoolean(); break;
+            case "INTEGER" : value = node.get(attributeKey).asInt(); break;
+            case "FLOAT" : value = node.get(attributeKey).asFloat(); break;
+            case "STRING" : value = node.get(attributeKey).asString(); break;
+            case "BYTES" : value = (Object) node.get(attributeKey).asByteArray(); break;
+            case "DATE" : value = node.get(attributeKey).asLocalDate(); break;
+            case "TIME" : value = node.get(attributeKey).asOffsetTime(); break;
+            case "LOCAL_TIME" : value = node.get(attributeKey).asLocalTime(); break;
+            case "DATE_TIME" : value = node.get(attributeKey).asZonedDateTime(); break;
+            case "LOCAL_DATE_TIME" : value = node.get(attributeKey).asLocalDateTime(); break;
+            case "POINT" : value = node.get(attributeKey).asPoint(); break;
+            case "NODE" : value = node.get(attributeKey).asNode(); break;
+            case "RELATIONSHIP" : value = node.get(attributeKey).asRelationship(); break;
+            case "PATH" : value = node.get(attributeKey).asPath(); break;
+            default : value = node.get(attributeKey).asObject();
         }
         if (value != null){
             // We need to change SingletonList for standard list

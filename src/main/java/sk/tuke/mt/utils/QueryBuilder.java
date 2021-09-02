@@ -212,18 +212,9 @@ public class QueryBuilder {
         String type = objectClass.getObjectClassValue();
         String skeleton;
         if (subQuery == null){
-            skeleton = String.format(
-                    """
-                            MATCH (n:%s)
-                            RETURN n
-                            """,type);
+            skeleton = "MATCH (n:" + type + ")\nRETURN n\n";
         }else {
-            skeleton = String.format(
-                    """
-                            MATCH (n:%s)
-                            WHERE %s
-                            RETURN n
-                            """,type,subQuery);
+            skeleton = "MATCH (n:" + type + ")\nWHERE " + subQuery + "\nRETURN n\n";
         }
 
             System.out.println(new Query(skeleton).toString());
@@ -232,12 +223,7 @@ public class QueryBuilder {
 
     public static Query getNodeRelationships(ObjectClass objectClass, String uid){
         String type = objectClass.getObjectClassValue();
-        String skeleton = String.format(
-                """
-                        MATCH (n:%s)-[r]-(a)
-                        WHERE ID(n) = %s
-                        RETURN type(r) AS relationship, labels(a) as label, collect(id(a)) as id
-                        """, type, uid);
+        String skeleton = "MATCH (n:" + type + ")-[r]-(a)\nWHERE ID(n) = " + uid + "\nRETURN type(r) AS relationship, labels(a) as label, collect(id(a)) as id\n";
         return new Query(skeleton);
     }
 }
