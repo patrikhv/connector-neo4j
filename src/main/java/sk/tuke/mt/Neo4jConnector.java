@@ -37,12 +37,12 @@ import sk.tuke.mt.utils.SchemaHelper;
 import java.util.*;
 
 
-@ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = neo4jConfiguration.class)
-public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp, SearchOp<String> {
+@ConnectorClass(displayNameKey = "neo4j.connector.display", configurationClass = Neo4jConfiguration.class)
+public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaOp, DeleteOp, SchemaOp, TestOp, SearchOp<String>, SyncOp {
 
-    private static final Log LOG = Log.getLog(neo4jConnector.class);
+    private static final Log LOG = Log.getLog(Neo4jConnector.class);
 
-    private neo4jConnection connection;
+    private Neo4jConnection connection;
 
     @Override
     public Configuration getConfiguration() {
@@ -51,7 +51,7 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
 
     @Override
     public void init(Configuration configuration) {
-        this.connection = new neo4jConnection((neo4jConfiguration) configuration);
+        this.connection = new Neo4jConnection((Neo4jConfiguration) configuration);
     }
 
     @Override
@@ -312,5 +312,15 @@ public class neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             connectorObjectBuilder.addAttribute(attributeKey, value);
 
         }
+    }
+
+    @Override
+    public void sync(ObjectClass objectClass, SyncToken syncToken, SyncResultsHandler syncResultsHandler, OperationOptions operationOptions) {
+
+    }
+
+    @Override
+    public SyncToken getLatestSyncToken(ObjectClass objectClass) {
+        return null;
     }
 }

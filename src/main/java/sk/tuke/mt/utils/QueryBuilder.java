@@ -209,15 +209,20 @@ public class QueryBuilder {
     }
 
     public static Query getQuery(ObjectClass objectClass, String subQuery, OperationOptions operationOptions){
+        String limit = "";
+        if (operationOptions != null){
+            if (operationOptions.getPageSize() != null){
+                limit = "LIMIT " + operationOptions.getPageSize() + " \n";
+            }
+        }
         String type = objectClass.getObjectClassValue();
         String skeleton;
         if (subQuery == null){
-            skeleton = "MATCH (n:" + type + ")\nRETURN n\n";
+            skeleton = "MATCH (n:" + type + ")\n"+ limit +"RETURN n\n";
         }else {
-            skeleton = "MATCH (n:" + type + ")\nWHERE " + subQuery + "\nRETURN n\n";
+            skeleton = "MATCH (n:" + type + ")\nWHERE " + subQuery + "\n" + limit + "RETURN n\n";
         }
 
-            System.out.println(new Query(skeleton).toString());
             return new Query(skeleton);
     }
 

@@ -2,7 +2,7 @@ package sk.tuke.mt.utils;
 
 import org.identityconnectors.framework.common.objects.*;
 import org.neo4j.driver.Record;
-import sk.tuke.mt.neo4jConnector;
+import sk.tuke.mt.Neo4jConnector;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,7 +21,7 @@ public class SchemaHelper {
 
     // Help: http://connid.tirasa.net/apidocs/1.4/org/identityconnectors/framework/common/objects/SchemaBuilder.html
     private static Schema generateSchema(HashMap<String, List<PropertyMapper>> properties){
-        SchemaBuilder builder = new SchemaBuilder(neo4jConnector.class);
+        SchemaBuilder builder = new SchemaBuilder(Neo4jConnector.class);
         properties.forEach((name,list) -> {
                 ObjectClassInfoBuilder objectClassBuilder = new ObjectClassInfoBuilder();
                 objectClassBuilder.setType(name);

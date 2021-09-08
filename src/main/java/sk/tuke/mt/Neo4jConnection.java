@@ -21,16 +21,16 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
 
-public class neo4jConnection {
+public class Neo4jConnection {
 
-    private static final Log LOG = Log.getLog(neo4jConnection.class);
+    private static final Log LOG = Log.getLog(Neo4jConnection.class);
 
-    private final neo4jConfiguration configuration;
+    private final Neo4jConfiguration configuration;
     private Driver driver;
 
     //TODO list of drivers/connectors?
 
-    public neo4jConnection(neo4jConfiguration configuration) {
+    public Neo4jConnection(Neo4jConfiguration configuration) {
         this.configuration = configuration;
         connect();
 
@@ -52,7 +52,7 @@ public class neo4jConnection {
         return driver;
     }
 
-    public neo4jConfiguration getConfiguration(){
+    public Neo4jConfiguration getConfiguration(){
         return configuration;
     }
 }

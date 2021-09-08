@@ -1,23 +1,21 @@
 package sk.tuke.mt;
 
-import org.identityconnectors.framework.spi.Connector;
-
 public abstract class BaseTest {
 
     private final String neoUri = "bolt://localhost:7687";
     private final String neoUsername = "neo4j";
     private final String neoPassword = "qetuop";
 
-    protected neo4jConnector connector;
+    protected Neo4jConnector connector;
 
 
-    protected neo4jConnector createConnector(){
-        neo4jConfiguration configuration = new neo4jConfiguration();
+    protected Neo4jConnector createConnector(){
+        Neo4jConfiguration configuration = new Neo4jConfiguration();
         configuration.setUri(neoUri);
         configuration.setUserName(neoUsername);
         configuration.setPassword(neoPassword);
 
-        neo4jConnector connector = new neo4jConnector();
+        Neo4jConnector connector = new Neo4jConnector();
         connector.init(configuration);
         return connector;
     }

@@ -6,7 +6,7 @@ public class TestOpTest extends BaseTest{
 
     @Test
     public void testGoodConfiguration(){
-        neo4jConnector connector = createConnector();
+        Neo4jConnector connector = createConnector();
         connector.test();
         connector.dispose();
     }

@@ -1,12 +1,7 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.framework.common.objects.*;
-import org.identityconnectors.framework.common.objects.filter.*;
-import sk.tuke.mt.entity.Role;
 import sk.tuke.mt.entity.User;
-
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 /*
     JavaDoc
@@ -17,13 +12,13 @@ connId: http://connid.tirasa.net/apidocs/1.4/index.html
 public class MainTest {
 
     public static void main(String[] args) {
-        neo4jConfiguration configuration = new neo4jConfiguration();
+        Neo4jConfiguration configuration = new Neo4jConfiguration();
         configuration.setUri("bolt://localhost:7687");
         configuration.setUserName("neo4j");
         configuration.setPassword("qetuop");
 
 
-        neo4jConnector connector = new neo4jConnector();
+        Neo4jConnector connector = new Neo4jConnector();
         connector.init(configuration);
         Schema schema =  connector.schema();
         System.out.println(schema.toString());
@@ -85,7 +80,7 @@ public class MainTest {
 //        connector.dispose();
     }
 
-    public void createOp(neo4jConnector connector){
+    public void createOp(Neo4jConnector connector){
         connector.test();
         User obj = new User("Denis", 33);
         obj.getProjects().add("7");

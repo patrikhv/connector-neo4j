@@ -21,9 +21,9 @@ import org.identityconnectors.framework.spi.AbstractConfiguration;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.spi.ConfigurationProperty;
 
-public class neo4jConfiguration extends AbstractConfiguration {
+public class Neo4jConfiguration extends AbstractConfiguration {
 
-    private static final Log LOG = Log.getLog(neo4jConfiguration.class);
+    private static final Log LOG = Log.getLog(Neo4jConfiguration.class);
 
     private String uri;
     private String userName;
