@@ -12,10 +12,6 @@ public class SchemaHelper {
     public static Schema getSchema(List<Record> records){
         List<String> nodeNames = getNodeNames(records);
         HashMap<String, List<PropertyMapper>> properties = getProperties(nodeNames, records);
-        for (String nodeName : nodeNames){
-            properties.get(nodeName).forEach(System.out::println);
-        }
-
         return generateSchema(properties);
     }
 
@@ -26,12 +22,12 @@ public class SchemaHelper {
                 ObjectClassInfoBuilder objectClassBuilder = new ObjectClassInfoBuilder();
                 objectClassBuilder.setType(name);
                 list.forEach(property -> {
-                    AttributeInfoBuilder uidAib = new AttributeInfoBuilder();
-                    uidAib.setName(property.getPropertyName());
-                    uidAib.setType(property.getPropertyJavaType());
-                    uidAib.setRequired(property.isMandatory());
-                    uidAib.setMultiValued(property.isMultivalued());
-                    objectClassBuilder.addAttributeInfo(uidAib.build());
+                    AttributeInfoBuilder attributeInfoBuilder = new AttributeInfoBuilder();
+                    attributeInfoBuilder.setName(property.getPropertyName());
+                    attributeInfoBuilder.setType(property.getPropertyJavaType());
+                    attributeInfoBuilder.setRequired(property.isMandatory());
+                    attributeInfoBuilder.setMultiValued(property.isMultivalued());
+                    objectClassBuilder.addAttributeInfo(attributeInfoBuilder.build());
                 });
                 builder.defineObjectClass(objectClassBuilder.build());
         });
@@ -44,7 +40,7 @@ public class SchemaHelper {
             String nodeName = record.get("nodeType").asString();
             nodeNames.add(cleanNodeName(nodeName));
         }
-        return removeDupList(nodeNames, false);
+        return removeDuplicateFromList(nodeNames, false);
     }
 
     private static HashMap<String, List<PropertyMapper>> getProperties(List<String> nodeNames ,List<Record> records){
@@ -67,7 +63,7 @@ public class SchemaHelper {
         return nodesProperties;
     }
 
-    private static List<String> removeDupList(List<String>list, boolean ignoreCase){
+    private static List<String> removeDuplicateFromList(List<String>list, boolean ignoreCase){
         Set<String> set = (ignoreCase?new TreeSet<String>(String.CASE_INSENSITIVE_ORDER):new LinkedHashSet<String>());
         set.addAll(list);
         return new ArrayList<String>(set);

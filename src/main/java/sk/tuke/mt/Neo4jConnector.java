@@ -51,7 +51,12 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
 
     @Override
     public void init(Configuration configuration) {
-        this.connection = new Neo4jConnection((Neo4jConfiguration) configuration);
+        try {
+            this.connection = new Neo4jConnection((Neo4jConfiguration) configuration);
+        } catch (Exception e){
+            LOG.error("Connector unavailable: " + e.getMessage());
+            throw new ConnectionFailedException(e);
+        }
     }
 
     @Override
@@ -135,12 +140,12 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         List<Record> entities;
         try(Session session = this.connection.getDriver().session()){
             entities = session.readTransaction(transaction -> {
-                Result result = transaction.run(QueryBuilder.schemaQueryRel());
+                Result result = transaction.run(QueryBuilder.schemaQuery());
                 return result.list();
             });
         }
         RelationshipsMapper.getRelationshipsFromSchema(entities);
-        //RelationshipsMapper.relationshipList.forEach(relationship -> System.out.println(relationship.toString()));
+        // RelationshipsMapper.relationshipList.forEach(relationship -> System.out.println(relationship.toString()));
         List<Record> records;
         try(Session session = this.connection.getDriver().session()){
             records = session.readTransaction(transaction -> {
@@ -192,8 +197,8 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             connection.getDriver().verifyConnectivity();
             LOG.info("Connection test: finished");
         } catch (Exception e){
-            LOG.error("Connection test: " + e.getMessage());
             connection.dispose();
+            LOG.error("Connection test: " + e.getMessage());
             throw new ConnectionFailedException(e);
         }
     }
@@ -212,7 +217,8 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
         try{
             connection.getDriver().verifyConnectivity();
         }catch (Exception e){
-            LOG.error("Check alive: failed! Reconnecting");
+            connection.dispose();
+            LOG.error("Check alive: " + e.getMessage());
             throw new ConnectionFailedException(e);
         }
     }
@@ -261,7 +267,6 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
                 return result.list();
             });
         }
-        // list.forEach(System.out::println);
         for (Record record: list){
             String relationshipName = record.get("relationship").asString();
             String label = record.get("label").asList().get(0).toString();
@@ -269,7 +274,7 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             for (Object value: record.get("id").asList()){
                 ids.add(String.valueOf(value));
             }
-            Relationship relationship = RelationshipsMapper.getRelationshipByName(relationshipName);
+            Relationship relationship = RelationshipsMapper.getRelationship(relationshipName);
             if (relationship != null){
                 connectorObjectBuilder.addAttribute(relationship.getVirtualAttributeName(), ids);
             }
@@ -312,6 +317,10 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
             connectorObjectBuilder.addAttribute(attributeKey, value);
 
         }
+    }
+
+    public void handleException(Exception exception){
+
     }
 
     @Override

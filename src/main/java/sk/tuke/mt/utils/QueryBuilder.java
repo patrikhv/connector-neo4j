@@ -149,7 +149,7 @@ public class QueryBuilder {
         return new Query(skeleton);
     }
 
-    public static Query schemaQueryRel(){
+    public static Query schemaQuery(){
         String skeleton = "CALL apoc.meta.schema";
         return new Query(skeleton);
     }

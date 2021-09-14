@@ -20,9 +20,9 @@ public class MainTest {
 
         Neo4jConnector connector = new Neo4jConnector();
         connector.init(configuration);
-        Schema schema =  connector.schema();
-        System.out.println(schema.toString());
-        //connector.test();
+        connector.test();
+        schemaOp(connector);
+
 //        User obj = new User("Denis", 33);
 //        obj.getProjects().add("7");
 //        obj.getRoles().add("1");
@@ -77,11 +77,10 @@ public class MainTest {
         //QueryBuilder.getSimpleGetQuery(new ObjectClass("User"),ft.translate(equalsFilter).get(0),null);
 
 //        connector.executeQuery(new ObjectClass("User"),ft.translate(filterFinal).get(0),new DummyResultHandler(),null);
-//        connector.dispose();
+        connector.dispose();
     }
 
-    public void createOp(Neo4jConnector connector){
-        connector.test();
+    public static void createOp(Neo4jConnector connector){
         User obj = new User("Denis", 33);
         obj.getProjects().add("7");
         obj.getRoles().add("1");
@@ -93,5 +92,10 @@ public class MainTest {
         // CREATEOP
          Uid id = connector.create(objectClass,obj.getAttributes(),builder.build());
          System.out.printf("CREATE: Id: %s%n", id.getUidValue());
+    }
+
+    public static void schemaOp(Neo4jConnector connector){
+        Schema schema = connector.schema();
+        System.out.println(schema.toString());
     }
 }

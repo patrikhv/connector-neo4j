@@ -17,6 +17,7 @@
 package sk.tuke.mt;
 
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.common.exceptions.ConfigurationException;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.AuthTokens;
@@ -33,11 +34,10 @@ public class Neo4jConnection {
     public Neo4jConnection(Neo4jConfiguration configuration) {
         this.configuration = configuration;
         connect();
-
     }
 
-    public void connect(){
-        // TODO check if already connected
+    public void connect() {
+
         configuration.validate();
         this.driver = GraphDatabase.driver( configuration.getUri(), AuthTokens.basic(configuration.getUserName(),
                 configuration.getPassword()));
