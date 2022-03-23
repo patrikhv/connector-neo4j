@@ -3,26 +3,29 @@ package sk.tuke.mt.entity;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class User {
 
     private String userName;
-    private int age;
     private List<String> roles;
-    private List<String> projects;
+    private List<String> groups;
 
     public User() {
     }
 
-    public User(String userName, int age) {
+    public User(String userName) {
         this.userName = userName;
-        this.age = age;
         this.roles = new LinkedList<>();
-        this.projects = new LinkedList<>();
+        this.groups = new LinkedList<>();
+    }
+
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
     }
 
     public String getUserName() {
@@ -33,14 +36,6 @@ public class User {
         this.userName = userName;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     public List<String> getRoles() {
         return roles;
     }
@@ -49,26 +44,18 @@ public class User {
         this.roles = roles;
     }
 
-    public List<String> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<String> projects) {
-        this.projects = projects;
-    }
 
     public Set<Attribute> getAttributes() {
-        // TODO automate and simplify
         Set<Attribute> attributeSet = new HashSet<>();
 
-        attributeSet.add(AttributeBuilder.build("userName", this.userName));
-        attributeSet.add(AttributeBuilder.build("age", this.age));
+        attributeSet.add(AttributeBuilder.build("user_name", this.userName));
         if (this.roles.size() > 0){
             attributeSet.add(AttributeBuilder.build("roles",this.roles.toArray()));
         }
-        if (this.projects.size() > 0){
-            attributeSet.add(AttributeBuilder.build("projects",this.projects.toArray()));
+        if (this.groups.size() > 0){
+            attributeSet.add(AttributeBuilder.build("groups",this.groups.toArray()));
         }
+
 
         return attributeSet;
     }

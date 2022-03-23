@@ -6,23 +6,21 @@ import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Role {
-    private String roleName;
+public class Organization {
+
+    private String name;
 
 
-    public Role(){
+    public Organization(String name) {
+        this.name = name;
     }
 
-    public Role(String roleName) {
-        this.roleName = roleName;
+    public String getName() {
+        return name;
     }
 
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<Attribute> getAttributes() {
@@ -30,8 +28,8 @@ public class Role {
         Set<Attribute> attributeSet = new HashSet<>();
 
         AttributeBuilder builder = new AttributeBuilder();
-        builder.setName("role_name");
-        builder.addValue(this.roleName);
+        builder.setName("organization_name");
+        builder.addValue(this.name);
 
         attributeSet.add(builder.build());
         return attributeSet;

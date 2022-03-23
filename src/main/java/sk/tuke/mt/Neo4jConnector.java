@@ -88,12 +88,10 @@ public class Neo4jConnector implements PoolableConnector, CreateOp, UpdateDeltaO
     }
 
     public void createRelationship(String uid, List<Object> values, Relationship relationship, List<Object> params){
-        String id = null;
         try (Session session = this.connection.getDriver().session()){
-            id = session.writeTransaction(transaction -> {
+            session.writeTransaction(transaction -> {
                 for (Object val: values){
-                    Result result = transaction.run(QueryBuilder.createRelationshipQuery(uid,(String) val, relationship, params));
-                    return String.valueOf(result.single().get( 0 ).asInt());
+                    transaction.run(QueryBuilder.createRelationshipQuery(uid,(String) val, relationship, params));
                 }
                 return null;
             });

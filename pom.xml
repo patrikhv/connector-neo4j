@@ -63,7 +63,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>sk.tuke.mt.MainTest</mainClass>
+                            <mainClass>sk.tuke.mt.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
